@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 
 public class EntityHealth : MonoBehaviour
+    
 {
     [Header("Stats")]
     [SerializeField] private int _maxHealth = 100;

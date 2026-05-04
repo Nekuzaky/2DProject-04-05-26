@@ -8,6 +8,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float _attackRange = 1.5f;
     [SerializeField] private int _attackDamage = 10;
     [SerializeField] private float _attackCooldown = 1f;
+   
 
     [Header("Target")]
     [SerializeField] private string _targetTag = "Player";
