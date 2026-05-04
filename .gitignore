@@ -61,6 +61,3 @@ Assets/StreamingAssets/aa/*
 ehthumbs.db
 Thumbs.db
 Desktop.ini
- 
-# Node (si tu as des outils JS)
-node_modules/
