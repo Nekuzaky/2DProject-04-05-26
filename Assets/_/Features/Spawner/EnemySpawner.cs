@@ -60,7 +60,7 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_playerTransform == null)
         {
-            _playerTransform = FindFirstObjectByType<PlayerController>()?.transform;
+            _playerTransform = FindAnyObjectByType<PlayerController>()?.transform;
         }
 
         Vector3 playerPosition = _playerTransform != null ? _playerTransform.position : Vector3.zero;
@@ -92,7 +92,7 @@ public class EnemySpawner : MonoBehaviour
         Transform player = _playerTransform;
         if (player == null && Application.isPlaying)
         {
-            player = FindFirstObjectByType<PlayerController>()?.transform;
+            player = FindAnyObjectByType<PlayerController>()?.transform;
         }
 
         Vector3 center = player != null ? player.position : transform.position;

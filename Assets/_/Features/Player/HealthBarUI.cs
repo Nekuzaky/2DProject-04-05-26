@@ -11,7 +11,7 @@ public class HealthBarUI : MonoBehaviour
     {
         if (_entityHealth == null)
         {
-            _entityHealth = FindFirstObjectByType<PlayerController>()?.GetComponent<EntityHealth>();
+            _entityHealth = FindAnyObjectByType<PlayerController>()?.GetComponent<EntityHealth>();
         }
 
         if (_healthSlider == null)
