@@ -34,13 +34,13 @@ public class Projectile : MonoBehaviour
     {
         if (collision.CompareTag("Enemy"))
         {
-            if (collision.gameObject)
+            if (collision.TryGetComponent(out EntityHealth enemyHealth))
             {
-              
+                enemyHealth.TakeDamage(_damage);
+                Debug.Log("<color=yellow><b>Projectile:</b></color> Hit " + collision.gameObject.name + " for " + _damage + " damage.");
             }
 
-            Destroy(gameObject, 3.0f);
-
+            Destroy(gameObject);
         }
     }
 }

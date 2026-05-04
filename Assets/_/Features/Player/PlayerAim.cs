@@ -3,24 +3,24 @@ using UnityEngine;
 public class PlayerAim : MonoBehaviour
 {
     [Header("<color=cyan><b><size=15>References</size></b></color>")]
-    [SerializeField] private Transform aimPivot;
+    [SerializeField] private Transform _aimPivot;
 
     [Header("<color=cyan><b><size=15>Settings</size></b></color>")]
-    [SerializeField] private float weaponDistance = 0.5f;
+    [SerializeField] private float _weaponDistance = 0.5f;
 
     [Header("<color=yellow><b><size=15>Input</size></b></color>")]
-    [SerializeField] private float stickDeadzone = 0.2f;
+    [SerializeField] private float _stickDeadzone = 0.2f;
 
-    private Camera mainCamera;
+    private Camera _mainCamera;
 
     private void Awake()
     {
-        mainCamera = Camera.main;
+        _mainCamera = Camera.main;
         
-        if (mainCamera == null)
+        if (_mainCamera == null)
             Debug.LogError("<color=red>PlayerAim: Main Camera not found!</color>");
         
-        if (aimPivot == null)
+        if (_aimPivot == null)
             Debug.LogError("<color=red>PlayerAim: Aim Pivot not assigned!</color>");
         else
             Debug.Log("<color=green>PlayerAim: Ready - Aim Pivot assigned</color>");
@@ -28,7 +28,7 @@ public class PlayerAim : MonoBehaviour
 
     private void Update()
     {
-        if (aimPivot == null || mainCamera == null) return;
+        if (_aimPivot == null || _mainCamera == null) return;
         
         Vector2 aimDir = GetAimDirection();
         if (aimDir.sqrMagnitude < 0.01f) return;
@@ -37,36 +37,47 @@ public class PlayerAim : MonoBehaviour
         
         bool isFacingLeft = aimDir.x < 0;
         
-        aimPivot.rotation = Quaternion.Euler(0, 0, angle);
+        _aimPivot.rotation = Quaternion.Euler(0, 0, angle);
         
         
         float parentScaleX = transform.localScale.x;
-        Vector3 gunScale = aimPivot.localScale;
+        Vector3 gunScale = _aimPivot.localScale;
         gunScale.x = 1f / Mathf.Abs(parentScaleX); 
         gunScale.y = (isFacingLeft ? -1 : 1) / Mathf.Abs(parentScaleX); 
-        aimPivot.localScale = gunScale;
+        _aimPivot.localScale = gunScale;
         
-        Vector2 orbitPosition = (Vector2)transform.position + (aimDir.normalized * weaponDistance);
-        aimPivot.position = orbitPosition;
+        Vector2 orbitPosition = (Vector2)transform.position + (aimDir.normalized * _weaponDistance);
+        _aimPivot.position = orbitPosition;
     }
 
     private Vector2 GetAimDirection()
     {
-        
+
         try
         {
-            float rx = Input.GetAxisRaw("RightStickHorizontal");
-            float ry = Input.GetAxisRaw("RightStickVertical");
+            float rx = 0f;
+            float ry = 0f;
+            
+  
+            try { rx = Input.GetAxisRaw("RightStickHorizontal"); }
+            catch { try { rx = Input.GetAxisRaw("Joystick2X"); } catch { } }
+            
+            try { ry = Input.GetAxisRaw("RightStickVertical"); }
+            catch { try { ry = Input.GetAxisRaw("Joystick2Y"); } catch { } }
+            
             Vector2 stick = new Vector2(rx, ry);
-            if (stick.magnitude > stickDeadzone)
+            if (stick.magnitude > _stickDeadzone)
+            {
+                Debug.Log($"<color=yellow>Controller aim: {stick}</color>"); 
                 return stick.normalized;
+            }
         }
         catch (System.ArgumentException)
         {
-            
+     
         }
   
-        Vector2 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         return mouseWorld - (Vector2)transform.position;
     }
 }
