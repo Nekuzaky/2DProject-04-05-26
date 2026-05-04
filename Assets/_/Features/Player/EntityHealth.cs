@@ -4,39 +4,49 @@ using UnityEngine.Events;
 public class EntityHealth : MonoBehaviour
 {
     [Header("Stats")]
-    [SerializeField] private int maxHealth = 100;
-    private int currentHealth;
+    [SerializeField] private int _maxHealth = 100;
+    private int _currentHealth;
 
     [Header("Events")]
-    public UnityEvent<int, int> onHealthChanged;
-    public UnityEvent onDeath;
+    public UnityEvent<int, int> OnHealthChanged;
+    public UnityEvent OnDeath;
 
     private void Awake()
     {
-        currentHealth = maxHealth;
+        _currentHealth = _maxHealth;
     }
 
     public void TakeDamage(int amount)
     {
-        currentHealth = Mathf.Clamp(currentHealth - amount, 0, maxHealth);
-        onHealthChanged.Invoke(currentHealth, maxHealth);
+        _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, _maxHealth);
+        OnHealthChanged.Invoke(_currentHealth, _maxHealth);
 
-        if (currentHealth == 0)
+        if (_currentHealth == 0)
             Die();
     }
 
     public void Heal(int amount)
     {
-        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        onHealthChanged.Invoke(currentHealth, maxHealth);
+        _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, _maxHealth);
+        OnHealthChanged.Invoke(_currentHealth, _maxHealth);
     }
 
    
     private void Die()
     {
-        onDeath.Invoke();
+        OnDeath.Invoke();
         Destroy(gameObject);
+        if (gameObject.CompareTag("Player"))
+        {
+            Debug.Log("<color=red><b>EntityHealth:</b></color> Player has died.");
+        }
+        else
+        {
+            Debug.Log("<color=red><b>EntityHealth:</b></color> Entity has died: " + gameObject.name);
+        }
+
     }
-    public int GetCurrentHealth() => currentHealth;
-    public int GetMaxHealth() => maxHealth;
+    
+    public int GetCurrentHealth() => _currentHealth;
+    public int GetMaxHealth() => _maxHealth;
 }

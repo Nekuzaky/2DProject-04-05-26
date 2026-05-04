@@ -7,10 +7,10 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float _spawnInterval = 5f;
     [SerializeField] private int _maxEnemies = 10;
     
-    [Header("Spawn Area (Optional)")]
-    [SerializeField] private bool _useRandomSpawnArea = false;
-    [SerializeField] private Vector2 _spawnAreaMin = Vector2.zero;
-    [SerializeField] private Vector2 _spawnAreaMax = Vector2.zero;
+    [Header("Circle Spawn Around Player")]
+    [SerializeField] private Transform _playerTransform;
+    [SerializeField] private float _spawnDistanceMin = 5f;
+    [SerializeField] private float _spawnDistanceMax = 10f;
     
     [Header("Debug")]
     [SerializeField] private bool _showGizmos = true;
@@ -36,11 +36,11 @@ public class EnemySpawner : MonoBehaviour
     {
         if (_enemyPrefab == null)
         {
-            Debug.LogError("[EnemySpawner] Enemy Prefab est null !");
+           
             return;
         }
 
-        Vector3 spawnPosition = _useRandomSpawnArea ? GetRandomSpawnPosition() : transform.position;
+        Vector3 spawnPosition = GetCircularSpawnPosition();
         
         GameObject enemy = Instantiate(_enemyPrefab, spawnPosition, Quaternion.identity);
         _currentEnemyCount++;
@@ -48,19 +48,30 @@ public class EnemySpawner : MonoBehaviour
         EntityHealth enemyHealth = enemy.GetComponent<EntityHealth>();
         if (enemyHealth != null)
         {
-            enemyHealth.onDeath.AddListener(OnEnemyDestroyed);
+            enemyHealth.OnDeath.AddListener(OnEnemyDestroyed);
         }
         else
         {
-            Debug.LogWarning("[EnemySpawner] L'ennemi n'a pas de composant EntityHealth !");
+          
         }
     }
 
-    private Vector3 GetRandomSpawnPosition()
+    private Vector3 GetCircularSpawnPosition()
     {
-        float randomX = Random.Range(_spawnAreaMin.x, _spawnAreaMax.x);
-        float randomY = Random.Range(_spawnAreaMin.y, _spawnAreaMax.y);
-        return new Vector3(randomX, randomY, 0f);
+        if (_playerTransform == null)
+        {
+            _playerTransform = FindFirstObjectByType<PlayerController>()?.transform;
+        }
+
+        Vector3 playerPosition = _playerTransform != null ? _playerTransform.position : Vector3.zero;
+        
+        float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+        float randomDistance = Random.Range(_spawnDistanceMin, _spawnDistanceMax);
+        
+        float spawnX = playerPosition.x + Mathf.Cos(randomAngle) * randomDistance;
+        float spawnY = playerPosition.y + Mathf.Sin(randomAngle) * randomDistance;
+        
+        return new Vector3(spawnX, spawnY, 0f);
     }
 
     public void OnEnemyDestroyed()
@@ -78,23 +89,18 @@ public class EnemySpawner : MonoBehaviour
     {
         if (!_showGizmos) return;
 
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, 0.5f);
-
-        if (_useRandomSpawnArea && _spawnAreaMax != Vector2.zero)
+        Transform player = _playerTransform;
+        if (player == null && Application.isPlaying)
         {
-            Gizmos.color = Color.green;
-            Vector3 center = new Vector3(
-                (_spawnAreaMin.x + _spawnAreaMax.x) / 2,
-                (_spawnAreaMin.y + _spawnAreaMax.y) / 2,
-                0
-            );
-            Vector3 size = new Vector3(
-                _spawnAreaMax.x - _spawnAreaMin.x,
-                _spawnAreaMax.y - _spawnAreaMin.y,
-                0
-            );
-            Gizmos.DrawWireCube(center, size);
+            player = FindFirstObjectByType<PlayerController>()?.transform;
         }
+
+        Vector3 center = player != null ? player.position : transform.position;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(center, _spawnDistanceMin);
+        
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(center, _spawnDistanceMax);
     }
 }

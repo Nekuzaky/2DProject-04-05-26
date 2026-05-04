@@ -1,48 +1,70 @@
 using UnityEngine;
 
+
+
 [DefaultExecutionOrder(-10)]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Mouvement")]
-    [SerializeField] private float moveSpeed = 5f;
+    [Header("Movement")]
+    [SerializeField] private float _moveSpeed = 5f;
+    [SerializeField] private float _runningMultiplier = 1.5f;
 
     [Header("Camera")]
-    [SerializeField] private float camSmoothing = 6f;
-    [SerializeField] private Vector3 camOffset = new Vector3(0f, 0f, -10f);
+    [SerializeField] private float _camSmoothing = 6f;
+    [SerializeField] private Vector3 _camOffset = new Vector3(0f, 0f, -10f);
 
-    private Rigidbody2D rb;
-    private Vector2 moveInput;
-    private Transform cam;
+    private Rigidbody2D _rb;
+    private Vector2 _moveInput;
+    private Transform _cam;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0f;
-        cam = Camera.main?.transform;
+        _rb = GetComponent<Rigidbody2D>();
+        _rb.gravityScale = 0f;
+        _cam = Camera.main?.transform;
     }
-
+    private void Start()
+    {
+        Debug.Log("<color=green><b>PlayerController:</b></color> Ready");
+    }
     private void Update()
     {
-        moveInput = new Vector2(
+
+        OnRun();
+
+        _moveInput = new Vector2(
             Input.GetAxisRaw("Horizontal"),
             Input.GetAxisRaw("Vertical")
         ).normalized;
 
-        if (moveInput.x > 0)
+        if (_moveInput.x > 0)
             transform.localScale = new Vector3(1, 1, 1);
-        else if (moveInput.x < 0)
+        else if (_moveInput.x < 0)
             transform.localScale = new Vector3(-1, 1, 1);
     }
 
     private void FixedUpdate()
     {
-        rb.linearVelocity = moveInput * moveSpeed;
+        _rb.linearVelocity = _moveInput * _moveSpeed;
     }
 
     private void LateUpdate()
     {
-        if (cam == null) return;
-        Vector3 target = transform.position + camOffset;
-        cam.position = Vector3.Lerp(cam.position, target, camSmoothing * Time.deltaTime);
+        if (_cam == null) return;
+        Vector3 target = transform.position + _camOffset;
+        _cam.position = Vector3.Lerp(_cam.position, target, _camSmoothing * Time.deltaTime);
+    }
+
+    private void OnRun()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            _moveSpeed = 5f * _runningMultiplier;
+        }
+        else
+        {
+            _moveSpeed = 5f;
+
+        }
     }
 }

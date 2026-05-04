@@ -31,7 +31,7 @@ public class EnemyAI : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[EnemyAI] Rigidbody2D manquant sur " + gameObject.name);
+            Debug.LogError("[EnemyAI] Rigidbody Missing " + gameObject.name);
         }
     }
 
@@ -116,6 +116,7 @@ public class EnemyAI : MonoBehaviour
             if (_targetHealth != null)
             {
                 _targetHealth.TakeDamage(_attackDamage);
+                Debug.Log("<color=red><b>EnemyAI:</b></color> Attacked " + _target.name + " for " + _attackDamage + " damage.");
             }
         }
     }
