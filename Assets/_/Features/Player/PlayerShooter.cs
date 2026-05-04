@@ -26,17 +26,14 @@ public class PlayerShooter : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R) && !_isReloading && _currentAmmo < _maxAmmo)
-        {
+        bool reloadPressed = Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.JoystickButton3);
+        if (reloadPressed && !_isReloading && _currentAmmo < _maxAmmo)
             StartReload();
-        }
 
         if (_isReloading)
-        {
             return;
-        }
 
-        bool fire = Input.GetMouseButton(0) || Input.GetButton("Fire1");
+        bool fire = Input.GetMouseButton(0) || Input.GetAxisRaw("RightTrigger") > 0.1f;
         if (fire && Time.time > _nextFireTime)
         {
             if (_currentAmmo > 0)

@@ -56,21 +56,13 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 GetAimDirection()
     {
-        
-        try
-        {
-            float rx = Input.GetAxisRaw("RightStickHorizontal");
-            float ry = Input.GetAxisRaw("RightStickVertical");
-            Vector2 stick = new Vector2(rx, ry);
-            if (stick.magnitude > 0.2f)
-                return stick.normalized;
-        }
-        catch (System.ArgumentException)
-        {
-           
-        }
+        Vector2 stick = new Vector2(
+            Input.GetAxisRaw("RightStickHorizontal"),
+            Input.GetAxisRaw("RightStickVertical")
+        );
+        if (stick.magnitude > 0.2f)
+            return stick.normalized;
 
-      
         Vector2 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         return mouseWorld - (Vector2)transform.position;
     }
@@ -89,14 +81,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnRun()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            _moveSpeed = 5f * _runningMultiplier;
-        }
-        else
-        {
-            _moveSpeed = 5f;
-
-        }
+        bool sprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton4);
+        _moveSpeed = sprinting ? 5f * _runningMultiplier : 5f;
     }
 }

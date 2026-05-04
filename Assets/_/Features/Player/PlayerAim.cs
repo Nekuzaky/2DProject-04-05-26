@@ -52,31 +52,13 @@ public class PlayerAim : MonoBehaviour
 
     private Vector2 GetAimDirection()
     {
+        Vector2 stick = new Vector2(
+            Input.GetAxisRaw("RightStickHorizontal"),
+            Input.GetAxisRaw("RightStickVertical")
+        );
+        if (stick.magnitude > _stickDeadzone)
+            return stick.normalized;
 
-        try
-        {
-            float rx = 0f;
-            float ry = 0f;
-            
-  
-            try { rx = Input.GetAxisRaw("RightStickHorizontal"); }
-            catch { try { rx = Input.GetAxisRaw("Joystick2X"); } catch { } }
-            
-            try { ry = Input.GetAxisRaw("RightStickVertical"); }
-            catch { try { ry = Input.GetAxisRaw("Joystick2Y"); } catch { } }
-            
-            Vector2 stick = new Vector2(rx, ry);
-            if (stick.magnitude > _stickDeadzone)
-            {
-                Debug.Log($"<color=yellow>Controller aim: {stick}</color>"); 
-                return stick.normalized;
-            }
-        }
-        catch (System.ArgumentException)
-        {
-     
-        }
-  
         Vector2 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         return mouseWorld - (Vector2)transform.position;
     }

@@ -5,10 +5,10 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [Header("<color=cyan><b><size=15>Game State</size></b></color>")]
-    [SerializeField] private bool isPaused = false;
+    [SerializeField] private bool _isPaused = false;
 
-    private float elapsedTime = 0f;
-    private bool isGameActive = true;
+    private float _elapsedTime = 0f;
+    private bool _isGameActive = true;
 
     public GameTimer Timer { get; private set; }
 
@@ -32,51 +32,48 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (!isGameActive || isPaused) return;
+        if (!_isGameActive || _isPaused) return;
 
-        elapsedTime += Time.deltaTime;
-        Timer.UpdateTime(elapsedTime);
+        _elapsedTime += Time.deltaTime;
+        Timer.UpdateTime(_elapsedTime);
     }
-    #region game control methods
+
+    #region Game Control
     public void StartGame()
     {
-        isGameActive = true;
-        elapsedTime = 0f;
+        _isGameActive = true;
+        _elapsedTime = 0f;
         Timer.Reset();
     }
 
     public void StopGame()
     {
-        isGameActive = false;
+        _isGameActive = false;
     }
 
     public void PauseGame()
     {
-        isPaused = true;
+        _isPaused = true;
         Time.timeScale = 0f;
     }
 
     public void ResumeGame()
     {
-        isPaused = false;
+        _isPaused = false;
         Time.timeScale = 1f;
     }
 
-    public float GetElapsedTime()
-    {
-        return elapsedTime;
-    }
+    public float GetElapsedTime() => _elapsedTime;
 
     private void OnDestroy()
     {
         if (Instance == this)
-        {
             Instance = null;
-        }
     }
+    #endregion
 }
-#endregion 
-#region timer class
+
+#region Timer Class
 public class GameTimer
 {
     public int Minutes { get; private set; }
@@ -97,9 +94,6 @@ public class GameTimer
         Milliseconds = 0;
     }
 
-    public override string ToString()
-    {
-        return $"{Minutes:00}:{Seconds:00}:{Milliseconds:00}";
-    }
-    #endregion 
+    public override string ToString() => $"{Minutes:00}:{Seconds:00}:{Milliseconds:00}";
 }
+#endregion
