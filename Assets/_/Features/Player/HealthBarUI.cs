@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class HealthBarUI : MonoBehaviour
 {
-    [Header("References")]
+    [Header("<color=red><size=15>References</size></b></color>")]
     [SerializeField] private Slider _healthSlider;
     [SerializeField] private EntityHealth _entityHealth;
 

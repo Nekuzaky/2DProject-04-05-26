@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class PlayerShooter : MonoBehaviour
 {
-    [Header("References")]
+    [Header("<color=cyan><b><size=15>References</size></b></color>")]
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject projectilePrefab;
 
-    [Header("Stats")]
+    [Header("<color=cyan><b><size=15>Settings</size></b></color>")]
     [SerializeField] private float fireRate = 0.2f;
 
     private float nextFireTime = 0f;

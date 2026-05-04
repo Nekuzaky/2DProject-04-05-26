@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class EntityHealth : MonoBehaviour
     
 {
-    [Header("Stats")]
+    [Header("<color=red><b><size=15>Stats</size></b></color>")]
     [SerializeField] private int _maxHealth = 100;
     private int _currentHealth;
 

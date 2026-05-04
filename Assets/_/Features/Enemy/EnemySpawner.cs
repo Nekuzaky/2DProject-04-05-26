@@ -2,17 +2,17 @@
 
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("Spawn Settings")]
+    [Header("<color=yellow><b><size=15>Spawn Settings</size></b></color>")]
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private float _spawnInterval = 5f;
     [SerializeField] private int _maxEnemies = 10;
     
-    [Header("Circle Spawn Around Player")]
+    [Header("<color=cyan><b><size=15>Spawn Area</size></b></color>")]
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private float _spawnDistanceMin = 5f;
     [SerializeField] private float _spawnDistanceMax = 10f;
     
-    [Header("Debug")]
+    [Header("<color=green><b><size=15>Debug</size></b></color>")]
     [SerializeField] private bool _showGizmos = true;
 
     private float _spawnTimer;

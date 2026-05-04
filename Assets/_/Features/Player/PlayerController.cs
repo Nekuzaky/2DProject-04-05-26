@@ -5,11 +5,11 @@ using UnityEngine;
 [DefaultExecutionOrder(-10)]
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement")]
+    [Header("<color=orange><b><size=15>Movement</size></b></color>")]
     [SerializeField] private float _moveSpeed = 5f;
     [SerializeField] private float _runningMultiplier = 1.5f;
 
-    [Header("Camera")]
+    [Header("<color=grey><b><size=15>Camera</size></b></color>")]
     [SerializeField] private float _camSmoothing = 6f;
     [SerializeField] private Vector3 _camOffset = new Vector3(0f, 0f, -10f);
 
@@ -37,10 +37,7 @@ public class PlayerController : MonoBehaviour
             Input.GetAxisRaw("Vertical")
         ).normalized;
 
-        if (_moveInput.x > 0)
-            transform.localScale = new Vector3(1, 1, 1);
-        else if (_moveInput.x < 0)
-            transform.localScale = new Vector3(-1, 1, 1);
+       
     }
 
     private void FixedUpdate()

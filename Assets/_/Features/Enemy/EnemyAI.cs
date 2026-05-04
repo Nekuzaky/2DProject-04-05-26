@@ -1,8 +1,10 @@
 using UnityEngine;
 
+
+[RequireComponent(typeof(Rigidbody2D))]
 public class EnemyAI : MonoBehaviour
 {
-    [Header("Stats")]
+    [Header("<color=cyan><b><size=15>Stats</size></b></color>")]
     [SerializeField] private float _moveSpeed = 3f;
     [SerializeField] private float _detectionRange = 8f;
     [SerializeField] private float _attackRange = 1.5f;
