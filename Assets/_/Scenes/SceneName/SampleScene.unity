@@ -376,6 +376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 489146980}
   - component: {fileID: 489146981}
+  - component: {fileID: 489146982}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -458,6 +459,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &489146982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489146979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9d63452eda09454282dbf60bf97934e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponStats
+  _baseDamage: 20
+  _baseFireRate: 0.5
+  _baseAmmoCapacity: 30
+  _baseReloadTime: 1.5
+  _baseSpreadAngle: 5
+  _projectileSpeed: 50
+  _range: 15
+  _trigger: {fileID: 11400000, guid: cd23b924cf734cf4ea525031d8fb7d60, type: 2}
+  _magazine: {fileID: 11400000, guid: 859b6a3381478b24aa9320ff8d982dee, type: 2}
+  _grip: {fileID: 11400000, guid: d9fdf125f7c1458438e4bad3e0cb9eb7, type: 2}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -928,10 +951,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShooter
   _firePoint: {fileID: 713186816}
   _projectilePrefab: {fileID: 4110516927223384630, guid: 08afb757c72f622429487008ee3b6dce, type: 3}
-  _fireRate: 0.2
-  _maxAmmo: 100
-  _currentAmmo: 100
-  _reloadTime: 2
+  _weaponStats: {fileID: 489146982}
   OnAmmoChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1674,7 +1694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   _enemyPrefab: {fileID: 8638469823503880507, guid: 5568221e4fe323045aa0918ca562e05d, type: 3}
-  _spawnInterval: 2.59
+  _spawnInterval: 1.25
   _maxEnemies: 10
   _playerTransform: {fileID: 572839174}
   _spawnDistanceMin: 3
@@ -1812,7 +1832,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 00
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

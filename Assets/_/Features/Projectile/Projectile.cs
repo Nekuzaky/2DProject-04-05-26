@@ -22,6 +22,11 @@ public class Projectile : MonoBehaviour
         Destroy(gameObject, _lifetime);
     }
 
+    public void SetDamage(int damage)
+    {
+        _damage = damage;
+    }
+
     public void Launch(Vector2 direction)
     {
         if (_rb != null)

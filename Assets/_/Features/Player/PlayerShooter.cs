@@ -6,13 +6,10 @@ public class PlayerShooter : MonoBehaviour
     [Header("<color=cyan><b><size=15>References</size></b></color>")]
     [SerializeField] private Transform _firePoint;
     [SerializeField] private GameObject _projectilePrefab;
+    [SerializeField] private WeaponStats _weaponStats;
 
-    [Header("<color=cyan><b><size=15>Settings</size></b></color>")]
-    [SerializeField] private float _fireRate = 0.2f;
-    [SerializeField] private int _maxAmmo = 100;
-    [SerializeField] private int _currentAmmo = 100;
-    [SerializeField] private float _reloadTime = 2f;
-
+    private int _maxAmmo;
+    private int _currentAmmo;
     private float _nextFireTime = 0f;
     private bool _isReloading = false;
 
@@ -20,6 +17,7 @@ public class PlayerShooter : MonoBehaviour
 
     private void Start()
     {
+        _maxAmmo = _weaponStats != null ? _weaponStats.FinalAmmoCapacity : _currentAmmo;
         _currentAmmo = _maxAmmo;
         OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
     }
@@ -33,12 +31,13 @@ public class PlayerShooter : MonoBehaviour
         if (_isReloading)
             return;
 
+        float fireRate = _weaponStats != null ? _weaponStats.FinalFireRate : 0.2f;
         bool fire = Input.GetMouseButton(0) || Input.GetAxisRaw("RightTrigger") > 0.1f;
         if (fire && Time.time > _nextFireTime)
         {
             if (_currentAmmo > 0)
             {
-                _nextFireTime = Time.time + _fireRate;
+                _nextFireTime = Time.time + fireRate;
                 Shoot();
             }
             else
@@ -53,12 +52,14 @@ public class PlayerShooter : MonoBehaviour
         if (_isReloading) return;
         
         _isReloading = true;
-        Invoke(nameof(FinishReload), _reloadTime);
+        float reloadTime = _weaponStats != null ? _weaponStats.FinalReloadTime : 2f;
+        Invoke(nameof(FinishReload), reloadTime);
         Debug.Log("<color=yellow><b>PlayerShooter:</b></color> Reloading...");
     }
 
     private void FinishReload()
     {
+        _maxAmmo = _weaponStats != null ? _weaponStats.FinalAmmoCapacity : _maxAmmo;
         _currentAmmo = _maxAmmo;
         _isReloading = false;
         OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
@@ -71,15 +72,21 @@ public class PlayerShooter : MonoBehaviour
         _currentAmmo--;
         OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
 
+        float spread = _weaponStats != null ? _weaponStats.FinalSpreadAngle : 0f;
+        float angle = Random.Range(-spread, spread);
+        Vector2 direction = Quaternion.Euler(0f, 0f, angle) * _firePoint.right;
+
         GameObject bullet = Instantiate(_projectilePrefab, _firePoint.position, _firePoint.rotation);
 
         if (bullet.TryGetComponent(out Projectile projectile))
         {
-            projectile.Launch(_firePoint.right);
+            projectile.SetDamage(_weaponStats != null ? _weaponStats.FinalDamage : 10);
+            projectile.Launch(direction);
         }
         else if (bullet.TryGetComponent(out Rigidbody2D rb))
         {
-            rb.linearVelocity = _firePoint.right * 10f;
+            float speed = _weaponStats != null ? _weaponStats._projectileSpeed : 10f;
+            rb.linearVelocity = direction * speed;
         }
     }
 }
