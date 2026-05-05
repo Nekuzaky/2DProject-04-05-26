@@ -4,6 +4,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
+    [Header("<color=orange><b><size=15>Spawn Base Settings</size></b></color>")]
+    [SerializeField] private int _baseMaxEnemiesPerSpawner = 10;
+
     [Header("<color=orange><b><size=15>Difficulty</size></b></color>")]
     [SerializeField] private int _killsPerDifficultyStep = 10;
     [SerializeField] private int _enemyCountIncreasePerStep = 5;
@@ -37,7 +40,10 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         if (EnemyManager.Instance != null)
+        {
+            EnemyManager.Instance.SetBaseMaxEnemiesPerSpawner(_baseMaxEnemiesPerSpawner);
             EnemyManager.Instance.OnKillCountChanged += OnKillCountChanged;
+        }
 
         PlayerController player = FindAnyObjectByType<PlayerController>();
         if (player != null && player.TryGetComponent(out EntityHealth health)) // we listen for the player's death event so we can end the game when they die
@@ -45,6 +51,8 @@ public class GameManager : MonoBehaviour
 
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
+
+        ApplyDifficulty();
     }
 
     private void OnUpdateTick()

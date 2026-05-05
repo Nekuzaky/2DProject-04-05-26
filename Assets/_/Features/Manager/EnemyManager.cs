@@ -57,11 +57,13 @@ public class EnemyManager : MonoBehaviour
     public void StartSpawning()
     {
         SetSpawningEnabled(true);
+        Debug.Log($"<color=green><b>EnemyManager:</b></color> StartSpawning called - Spawning Enabled: {_spawningEnabled}");
     }
 
     public void StopSpawning()
     {
         SetSpawningEnabled(false);
+        Debug.Log($"<color=red><b>EnemyManager:</b></color> StopSpawning called - Spawning Enabled: {_spawningEnabled}");
     }
 
     public void SetSpawningEnabled(bool isEnabled)
@@ -122,7 +124,26 @@ public class EnemyManager : MonoBehaviour
     public void SetDifficulty(int additionalMaxEnemies, float spawnInterval)
     {
         foreach (EnemySpawner spawner in _spawners)
-            if (spawner != null) spawner.SetDifficulty(additionalMaxEnemies, spawnInterval);
+        {
+            if (spawner != null)
+                spawner.SetDifficulty(additionalMaxEnemies, spawnInterval);
+        }
+
+        Debug.Log($"<color=orange><b>EnemyManager:</b></color> SetDifficulty called - Additional Max Enemies: {additionalMaxEnemies} - Spawn Interval: {spawnInterval}");
+    }
+
+    public void SetBaseMaxEnemiesPerSpawner(int baseMaxEnemies)
+    {
+        if (_spawners == null) return;
+
+        int clampedBase = Mathf.Max(1, baseMaxEnemies);
+        foreach (EnemySpawner spawner in _spawners)
+        {
+            if (spawner != null)
+                spawner.SetBaseMaxEnemies(clampedBase);
+        }
+
+        Debug.Log($"<color=orange><b>EnemyManager:</b></color> Base max enemies per spawner set to {clampedBase}");
     }
 
     private void ApplySpawnState()
@@ -171,11 +192,15 @@ public class EnemyManager : MonoBehaviour
 
         if (Application.isPlaying)
             ApplySpawnState();
+
+        Debug.Log($"<color=orange><b>EnemyManager:</b></color> OnValidate called - SpawningEnabled: {_spawningEnabled} - Spawner States: {string.Join(", ", _spawnerEnabled)}");
     }
 
     private void OnDestroy()
     {
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
+
+        Debug.Log($"<color=red><b>EnemyManager:</b></color> OnDestroy called - Unsubscribed from UpdateManager");
     }
 }

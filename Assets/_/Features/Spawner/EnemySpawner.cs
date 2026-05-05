@@ -76,6 +76,12 @@ public class EnemySpawner : MonoBehaviour
     public int GetCurrentEnemyCount() => _currentEnemyCount;
     public int GetMaxEnemies() => _maxEnemies;
 
+    public void SetBaseMaxEnemies(int baseMaxEnemies)
+    {
+        _baseMaxEnemies = Mathf.Max(1, baseMaxEnemies);
+        _maxEnemies = _baseMaxEnemies;
+    }
+
     public void ReturnEnemyToPool(GameObject enemy, GameObject sourcePrefab)
     {
         if (enemy == null) return;
@@ -167,3 +173,4 @@ public class EnemySpawner : MonoBehaviour
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
 }
+                                                                           
