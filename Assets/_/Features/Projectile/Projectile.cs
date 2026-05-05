@@ -8,6 +8,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private int _damage = 10;
     [SerializeField] private float _lifetime = 5f;
     [SerializeField] private float _speed = 10f;
+    [SerializeField] private string _targetTag = "Enemy";
 
 
     private Rigidbody2D _rb;
@@ -37,15 +38,12 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
-        {
-            if (collision.TryGetComponent(out EntityHealth enemyHealth))
-            {
-                enemyHealth.TakeDamage(_damage);
-                Debug.Log("<color=yellow><b>Projectile:</b></color> Hit " + collision.gameObject.name + " for " + _damage + " damage.");
-            }
+        if (collision.TryGetComponent(out Projectile _)) return;
+        if (!collision.CompareTag(_targetTag)) return;
 
-            Destroy(gameObject);
-        }
+        if (collision.TryGetComponent(out EntityHealth health))
+            health.TakeDamage(_damage);
+
+        Destroy(gameObject);
     }
 }

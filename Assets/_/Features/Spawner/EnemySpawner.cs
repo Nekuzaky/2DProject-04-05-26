@@ -1,30 +1,31 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [Header("<color=yellow><b><size=15>Spawn Settings</size></b></color>")]
-    [SerializeField] private GameObject _enemyPrefab;
+    [Header("<color=yellow><b><size=15>Prefabs</size></b></color>")]
+    [SerializeField] private GameObject _meleePrefab;
+    [SerializeField] private GameObject _shooterPrefab;
+
+    [Header("<color=cyan><b><size=15>Spawn Settings</size></b></color>")]
     [SerializeField] private float _spawnInterval = 5f;
     [SerializeField] private int _maxEnemies = 10;
-    
-    [Header("<color=cyan><b><size=15>Spawn Area</size></b></color>")]
-    [SerializeField] private Transform _playerTransform;
     [SerializeField] private float _spawnDistanceMin = 5f;
     [SerializeField] private float _spawnDistanceMax = 10f;
-    
-    [Header("<color=green><b><size=15>Debug</size></b></color>")]
-    [SerializeField] private bool _showGizmos = true;
 
     private float _spawnTimer;
     private int _currentEnemyCount;
+    private Transform _playerTransform;
+
+    private void Start()
+    {
+        _playerTransform = FindAnyObjectByType<PlayerController>()?.transform;
+    }
 
     private void Update()
     {
-        if (_currentEnemyCount >= _maxEnemies)
-            return;
+        if (_currentEnemyCount >= _maxEnemies) return;
 
         _spawnTimer += Time.deltaTime;
-
         if (_spawnTimer >= _spawnInterval)
         {
             SpawnEnemy();
@@ -34,52 +35,28 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        if (_enemyPrefab == null)
-        {
-           
-            return;
-        }
+        GameObject prefab = Random.value < 0.5f ? _meleePrefab : _shooterPrefab;
+        if (prefab == null) return;
 
-        Vector3 spawnPosition = GetCircularSpawnPosition();
-        
-        GameObject enemy = Instantiate(_enemyPrefab, spawnPosition, Quaternion.identity);
+        Vector3 spawnPos = GetSpawnPosition();
+        GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
         _currentEnemyCount++;
 
-        EntityHealth enemyHealth = enemy.GetComponent<EntityHealth>();
-        if (enemyHealth != null)
-        {
-            enemyHealth.OnDeath.AddListener(OnEnemyDestroyed);
-        }
-        else
-        {
-          
-        }
+        if (enemy.TryGetComponent(out EntityHealth health))
+            health.OnDeath.AddListener(OnEnemyDestroyed);
     }
 
-    private Vector3 GetCircularSpawnPosition()
+    private Vector3 GetSpawnPosition()
     {
-        if (_playerTransform == null)
-        {
-            _playerTransform = FindAnyObjectByType<PlayerController>()?.transform;
-        }
-
-        Vector3 playerPosition = _playerTransform != null ? _playerTransform.position : Vector3.zero;
-        
-        float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
-        float randomDistance = Random.Range(_spawnDistanceMin, _spawnDistanceMax);
-        
-        float spawnX = playerPosition.x + Mathf.Cos(randomAngle) * randomDistance;
-        float spawnY = playerPosition.y + Mathf.Sin(randomAngle) * randomDistance;
-        
-        return new Vector3(spawnX, spawnY, 0f);
+        Vector3 center = _playerTransform != null ? _playerTransform.position : Vector3.zero;
+        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+        float dist = Random.Range(_spawnDistanceMin, _spawnDistanceMax);
+        return center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
     }
 
     public void OnEnemyDestroyed()
     {
-        _currentEnemyCount--;
-        if (_currentEnemyCount < 0)
-            _currentEnemyCount = 0;
-
+        _currentEnemyCount = Mathf.Max(0, _currentEnemyCount - 1);
         EnemyManager.Instance?.AddKill();
     }
 
@@ -88,19 +65,9 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        if (!_showGizmos) return;
-
-        Transform player = _playerTransform;
-        if (player == null && Application.isPlaying)
-        {
-            player = FindAnyObjectByType<PlayerController>()?.transform;
-        }
-
-        Vector3 center = player != null ? player.position : transform.position;
-
+        Vector3 center = _playerTransform != null ? _playerTransform.position : transform.position;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(center, _spawnDistanceMin);
-        
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(center, _spawnDistanceMax);
     }

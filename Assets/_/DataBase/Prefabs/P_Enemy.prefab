@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3184155494773355345}
   - component: {fileID: 3459685217542972114}
-  - component: {fileID: 2732201841698987150}
   - component: {fileID: 5701765003743379723}
   - component: {fileID: 4044964178750338139}
   - component: {fileID: 78233429773353299}
+  - component: {fileID: -7259620053087561333}
   m_Layer: 0
   m_Name: P_Enemy
   m_TagString: Enemy
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 71ed984895c87eb43894eda40cea3129, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
@@ -95,24 +95,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &2732201841698987150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8638469823503880507}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bbc5414795ade04fad592a219e05c7c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  _moveSpeed: 5
-  _detectionRange: 500
-  _attackRange: 0.59
-  _attackDamage: 10
-  _attackCooldown: 1
-  _targetTag: Player
 --- !u!114 &5701765003743379723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f074a14197fd434799886b9fb00cb74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityHealth
-  _maxHealth: 100
+  _maxHealth: 50
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -195,3 +177,21 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &-7259620053087561333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638469823503880507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c7399e97cbca51418d139947cd98368, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAI
+  _moveSpeed: 4.42
+  _detectionRange: 8
+  _attackRange: 0.31
+  _attackDamage: 10
+  _attackCooldown: 1
+  _targetTag: Player

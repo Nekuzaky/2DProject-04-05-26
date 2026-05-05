@@ -85,7 +85,7 @@ public class PlayerShooter : MonoBehaviour
         }
         else if (bullet.TryGetComponent(out Rigidbody2D rb))
         {
-            float speed = _weaponStats != null ? _weaponStats._projectileSpeed : 10f;
+        float speed = _weaponStats != null ? _weaponStats.ProjectileSpeed : 10f;
             rb.linearVelocity = direction * speed;
         }
     }

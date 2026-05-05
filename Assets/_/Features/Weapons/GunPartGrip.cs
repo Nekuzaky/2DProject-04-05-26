@@ -6,5 +6,5 @@ using UnityEngine;
 public class GunPartGrip : ScriptableObject
 {
     [Header("<color=cyan><b><size=15>Grip Stats</size></b></color>")]
-    public float _accuracyBonus = 0f;
+    public float AccuracyBonus = 0f;
 }

@@ -2,12 +2,11 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(EntityHealth))]
-public class EnemyAI : MonoBehaviour
+public class BaseEnemyAI : MonoBehaviour
 {
     [Header("<color=cyan><b><size=15>Stats</size></b></color>")]
     [SerializeField] protected float _moveSpeed = 3f;
-    [SerializeField] protected float _detectionRange = 12f;
+    [SerializeField] protected float _detectionRange = 8f;
     [SerializeField] protected float _attackRange = 1.5f;
     [SerializeField] protected int _attackDamage = 10;
     [SerializeField] protected float _attackCooldown = 1f;
@@ -22,16 +21,21 @@ public class EnemyAI : MonoBehaviour
     protected float _nextAttackTime = 0f;
 
     protected enum EnemyState { Idle, Chase, Attack }
-    private EnemyState _currentState = EnemyState.Idle;
-    protected EnemyState CurrentState { get => _currentState; set => _currentState = value; }
+    protected EnemyState _currentState = EnemyState.Idle;
 
     protected virtual void Awake()
     {
-        gameObject.tag = "Enemy";
-
         _rb = GetComponent<Rigidbody2D>();
-        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
-        _rb.gravityScale = 0f;
+        
+        if (_rb != null)
+        {
+            _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            _rb.gravityScale = 0f;
+        }
+        else
+        {
+            Debug.LogError("[EnemyAI] Rigidbody Missing " + gameObject.name);
+        }
     }
 
     protected virtual void Start()
@@ -57,12 +61,12 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         Move();
     }
 
-    private void FindTarget()
+    protected void FindTarget()
     {
         GameObject targetObject = GameObject.FindWithTag(_targetTag);
 
@@ -89,7 +93,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void Move()
+    protected virtual void Move()
     {
         if (_rb == null) return;
 
@@ -106,9 +110,21 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    protected virtual void Attack() { }
+    protected virtual void Attack()
+    {
+        if (Time.time >= _nextAttackTime)
+        {
+            _nextAttackTime = Time.time + _attackCooldown;
 
-    protected virtual void OnDrawGizmosSelected()
+            if (_targetHealth != null)
+            {
+                _targetHealth.TakeDamage(_attackDamage);
+                Debug.Log("<color=red><b>EnemyAI:</b></color> Attacked " + _target.name + " for " + _attackDamage + " damage.");
+            }
+        }
+    }
+
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, _detectionRange);

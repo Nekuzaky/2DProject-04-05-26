@@ -4,6 +4,7 @@ public class PlayerAim : MonoBehaviour
 {
     [Header("<color=cyan><b><size=15>References</size></b></color>")]
     [SerializeField] private Transform _aimPivot;
+    [SerializeField] private SpriteRenderer _weaponRenderer;
 
     [Header("<color=cyan><b><size=15>Settings</size></b></color>")]
     [SerializeField] private float _weaponDistance = 0.5f;
@@ -29,25 +30,21 @@ public class PlayerAim : MonoBehaviour
     private void Update()
     {
         if (_aimPivot == null || _mainCamera == null) return;
-        
+
         Vector2 aimDir = GetAimDirection();
         if (aimDir.sqrMagnitude < 0.01f) return;
 
-        float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
-        
         bool isFacingLeft = aimDir.x < 0;
-        
+
+        float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
+
         _aimPivot.rotation = Quaternion.Euler(0, 0, angle);
-        
-        
-        float parentScaleX = transform.localScale.x;
-        Vector3 gunScale = _aimPivot.localScale;
-        gunScale.x = 1f / Mathf.Abs(parentScaleX); 
-        gunScale.y = (isFacingLeft ? -1 : 1) / Mathf.Abs(parentScaleX); 
-        _aimPivot.localScale = gunScale;
-        
-        Vector2 orbitPosition = (Vector2)transform.position + (aimDir.normalized * _weaponDistance);
-        _aimPivot.position = orbitPosition;
+        _aimPivot.localScale = Vector3.one;
+
+        // flipY sur le SpriteRenderer évite le bug de culling de scale négatif
+        if (_weaponRenderer) _weaponRenderer.flipY = isFacingLeft;
+
+        _aimPivot.position = (Vector2)transform.position + aimDir.normalized * _weaponDistance;
     }
 
     private Vector2 GetAimDirection()
