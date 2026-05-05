@@ -77,9 +77,10 @@ public class EnemySpawner : MonoBehaviour
     public void OnEnemyDestroyed()
     {
         _currentEnemyCount--;
-        
         if (_currentEnemyCount < 0)
             _currentEnemyCount = 0;
+
+        EnemyManager.Instance?.AddKill();
     }
 
     public int GetCurrentEnemyCount() => _currentEnemyCount;

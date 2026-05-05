@@ -43,15 +43,7 @@ public class PlayerController : MonoBehaviour
         ).normalized;
 
   
-        if (_playerSprite != null && _mainCamera != null)
-        {
-            Vector2 aimDirection = GetAimDirection();
-            
-            if (aimDirection.x > 0)
-                _playerSprite.localScale = new Vector3(1, 1, 1);
-            else if (aimDirection.x < 0)
-                _playerSprite.localScale = new Vector3(-1, 1, 1);
-        }
+       
     }
 
     private Vector2 GetAimDirection()
