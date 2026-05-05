@@ -20,9 +20,12 @@ public class PlayerShooter : MonoBehaviour
         _maxAmmo = _weaponStats != null ? _weaponStats.FinalAmmoCapacity : _currentAmmo;
         _currentAmmo = _maxAmmo;
         OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
+
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
     }
 
-    private void Update()
+    private void OnUpdateTick()
     {
         bool reloadPressed = Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.JoystickButton3);
         if (reloadPressed && !_isReloading && _currentAmmo < _maxAmmo)
@@ -88,5 +91,11 @@ public class PlayerShooter : MonoBehaviour
         float speed = _weaponStats != null ? _weaponStats.ProjectileSpeed : 10f;
             rb.linearVelocity = direction * speed;
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
 }

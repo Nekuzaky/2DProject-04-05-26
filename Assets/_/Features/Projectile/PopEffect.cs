@@ -23,7 +23,13 @@ public class PopEffect : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void Start()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
+    }
+
+    private void OnUpdateTick()
     {
         timer -= Time.deltaTime;
         float t = 1f - Mathf.Clamp01(timer / duration);
@@ -31,5 +37,11 @@ public class PopEffect : MonoBehaviour
 
         if (timer <= 0f)
             Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
 }

@@ -34,9 +34,12 @@ public class EnemySpawner : MonoBehaviour
     private void Start()
     {
         _playerTransform = FindAnyObjectByType<PlayerController>()?.transform;
+
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
     }
 
-    private void Update()
+    private void OnUpdateTick()
     {
         if (_currentEnemyCount >= _maxEnemies) return;
 
@@ -156,5 +159,11 @@ public class EnemySpawner : MonoBehaviour
         Gizmos.DrawWireSphere(center, _spawnDistanceMin);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(center, _spawnDistanceMax);
+    }
+
+    private void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
 }

@@ -27,7 +27,13 @@ public class PlayerAim : MonoBehaviour
             Debug.Log("<color=green>PlayerAim: Ready - Aim Pivot assigned</color>");
     }
 
-    private void Update()
+    private void Start()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
+    }
+
+    private void OnUpdateTick()
     {
         if (_aimPivot == null || _mainCamera == null) return;
 
@@ -58,5 +64,11 @@ public class PlayerAim : MonoBehaviour
 
         Vector2 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         return mouseWorld - (Vector2)transform.position;
+    }
+
+    private void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
 }

@@ -42,9 +42,12 @@ public class GameManager : MonoBehaviour
         PlayerController player = FindAnyObjectByType<PlayerController>();
         if (player != null && player.TryGetComponent(out EntityHealth health)) // we listen for the player's death event so we can end the game when they die
             health.OnDeath.AddListener(OnPlayerDied);
+
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
     }
 
-    private void Update()
+    private void OnUpdateTick()
     {
         if (!_gameOver)
             _elapsedTime += Time.deltaTime;
@@ -98,5 +101,8 @@ public class GameManager : MonoBehaviour
     {
         if (EnemyManager.Instance != null)
             EnemyManager.Instance.OnKillCountChanged -= OnKillCountChanged;
+
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
 }

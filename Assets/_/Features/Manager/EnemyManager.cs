@@ -36,9 +36,12 @@ public class EnemyManager : MonoBehaviour
 
         EnsureSpawnerStateArray();
         ApplySpawnState();
+
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
     }
 
-    private void Update()
+    private void OnUpdateTick()
     {
         int count = 0;
         foreach (EnemySpawner spawner in _spawners)
@@ -168,5 +171,11 @@ public class EnemyManager : MonoBehaviour
 
         if (Application.isPlaying)
             ApplySpawnState();
+    }
+
+    private void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
 }

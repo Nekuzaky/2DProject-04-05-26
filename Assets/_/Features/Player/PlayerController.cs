@@ -31,40 +31,31 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         Debug.Log("<color=green><b>PlayerController:</b></color> Ready");
-    }
-    private void Update()
-    {
 
+        if (UpdateManager.Instance != null)
+        {
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
+            UpdateManager.Instance.OnFixedUpdate += OnFixedUpdateTick;
+            UpdateManager.Instance.OnLateUpdate += OnLateUpdateTick;
+        }
+    }
+
+    private void OnUpdateTick()
+    {
         OnRun();
 
         _moveInput = new Vector2(
             Input.GetAxisRaw("Horizontal"),
             Input.GetAxisRaw("Vertical")
         ).normalized;
-
-  
-       
     }
 
-    private Vector2 GetAimDirection()
-    {
-        Vector2 stick = new Vector2(
-            Input.GetAxisRaw("RightStickHorizontal"),
-            Input.GetAxisRaw("RightStickVertical")
-        );
-        if (stick.magnitude > 0.2f)
-            return stick.normalized;
-
-        Vector2 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        return mouseWorld - (Vector2)transform.position;
-    }
-
-    private void FixedUpdate()
+    private void OnFixedUpdateTick()
     {
         _rb.linearVelocity = _moveInput * _moveSpeed;
     }
 
-    private void LateUpdate()
+    private void OnLateUpdateTick()
     {
         if (_cam == null) return;
         Vector3 target = transform.position + _camOffset;
@@ -75,5 +66,15 @@ public class PlayerController : MonoBehaviour
     {
         bool sprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton4);
         _moveSpeed = sprinting ? 5f * _runningMultiplier : 5f;
+    }
+
+    private void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+        {
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
+            UpdateManager.Instance.OnFixedUpdate -= OnFixedUpdateTick;
+            UpdateManager.Instance.OnLateUpdate -= OnLateUpdateTick;
+        }
     }
 }
