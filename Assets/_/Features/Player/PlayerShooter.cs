@@ -12,8 +12,14 @@ public class PlayerShooter : MonoBehaviour
     private int _currentAmmo;
     private float _nextFireTime = 0f;
     private bool _isReloading = false;
+    private float _reloadStartTime;
+    private float _reloadDuration;
+
+    public float ReloadProgress => _isReloading ? Mathf.Clamp01((Time.time - _reloadStartTime) / _reloadDuration) : 0f;
 
     public UnityEvent<int, int> OnAmmoChanged;
+    public event System.Action<float> OnReloadStart;
+    public event System.Action OnReloadFinished;
 
     private void Start()
     {
@@ -55,8 +61,10 @@ public class PlayerShooter : MonoBehaviour
         if (_isReloading) return;
         
         _isReloading = true;
-        float reloadTime = _weaponStats != null ? _weaponStats.FinalReloadTime : 2f;
-        Invoke(nameof(FinishReload), reloadTime);
+        _reloadDuration = _weaponStats != null ? _weaponStats.FinalReloadTime : 2f;
+        _reloadStartTime = Time.time;
+        Invoke(nameof(FinishReload), _reloadDuration);
+        OnReloadStart?.Invoke(_reloadDuration);
         Debug.Log("<color=yellow><b>PlayerShooter:</b></color> Reloading...");
     }
 
@@ -66,6 +74,7 @@ public class PlayerShooter : MonoBehaviour
         _currentAmmo = _maxAmmo;
         _isReloading = false;
         OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
+        OnReloadFinished?.Invoke();
         Debug.Log("<color=green><b>PlayerShooter:</b></color> Reloaded");
 
     }
