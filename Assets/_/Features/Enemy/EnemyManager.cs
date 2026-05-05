@@ -62,4 +62,20 @@ public class EnemyManager : MonoBehaviour
         _killCount++;
         OnKillCountChanged?.Invoke(_killCount);
     }
+
+    public float BaseSpawnInterval
+    {
+        get
+        {
+            if (_spawners != null && _spawners.Length > 0 && _spawners[0] != null)
+                return _spawners[0].BaseSpawnInterval;
+            return 5f;
+        }
+    }
+
+    public void SetDifficulty(int additionalMaxEnemies, float spawnInterval)
+    {
+        foreach (EnemySpawner spawner in _spawners)
+            if (spawner != null) spawner.SetDifficulty(additionalMaxEnemies, spawnInterval);
+    }
 }

@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAI
   _moveSpeed: 4.42
-  _detectionRange: 8
+  _detectionRange: 500
   _attackRange: 0.31
   _attackDamage: 10
   _attackCooldown: 1

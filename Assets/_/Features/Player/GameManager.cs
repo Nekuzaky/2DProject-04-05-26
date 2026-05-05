@@ -4,13 +4,21 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    [Header("<color=cyan><b><size=15>Game State</size></b></color>")]
-    [SerializeField] private bool _isPaused = false;
+    [Header("<color=orange><b><size=15>Difficulty</size></b></color>")]
+    [SerializeField] private int _killsPerDifficultyStep = 10;
+    [SerializeField] private int _enemyCountIncreasePerStep = 5;
+    [SerializeField] private float _spawnIntervalDecreasePerStep = 0.3f;
+    [SerializeField] private float _minSpawnInterval = 0.5f;
 
-    private float _elapsedTime = 0f;
-    private bool _isGameActive = true;
+    private int _killCount;
+    private int _difficultyLevel;
+    private bool _gameOver;
+    private float _elapsedTime;
 
-    public GameTimer Timer { get; private set; }
+    public int KillCount => _killCount;
+    public int DifficultyLevel => _difficultyLevel;
+    public bool IsGameOver => _gameOver;
+    public System.TimeSpan Timer => System.TimeSpan.FromSeconds(_elapsedTime);
 
     private void Awake()
     {
@@ -19,81 +27,62 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
-        Timer = new GameTimer();
     }
 
     private void Start()
     {
-        Debug.Log("<color=green><b>GameManager:</b></color> Ready");
-        StartGame();
+        if (EnemyManager.Instance != null)
+            EnemyManager.Instance.OnKillCountChanged += OnKillCountChanged;
+
+        PlayerController player = FindAnyObjectByType<PlayerController>();
+        if (player != null && player.TryGetComponent(out EntityHealth health))
+            health.OnDeath.AddListener(OnPlayerDied);
     }
 
     private void Update()
     {
-        if (!_isGameActive || _isPaused) return;
-
-        _elapsedTime += Time.deltaTime;
-        Timer.UpdateTime(_elapsedTime);
+        if (!_gameOver)
+            _elapsedTime += Time.deltaTime;
     }
 
-    #region Game Control
-    public void StartGame()
+    private void OnKillCountChanged(int totalKills)
     {
-        _isGameActive = true;
-        _elapsedTime = 0f;
-        Timer.Reset();
+        _killCount = totalKills;
+
+        int newDifficulty = _killCount / _killsPerDifficultyStep;
+        if (newDifficulty > _difficultyLevel)
+        {
+            _difficultyLevel = newDifficulty;
+            ApplyDifficulty();
+        }
     }
 
-    public void StopGame()
+    private void ApplyDifficulty() // this is where we calculate the new difficulty settings and apply them to the EnemyManager
     {
-        _isGameActive = false;
+        if (EnemyManager.Instance == null) return;
+
+        int newMaxEnemies = _enemyCountIncreasePerStep * _difficultyLevel;  // we add to the base max enemies in EnemySpawner, so we only calculate the increase here
+        float newSpawnInterval = Mathf.Max(
+            _minSpawnInterval,
+            EnemyManager.Instance.BaseSpawnInterval - _spawnIntervalDecreasePerStep * _difficultyLevel
+        );
+
+        EnemyManager.Instance.SetDifficulty(newMaxEnemies, newSpawnInterval);
+
+        Debug.Log($"<color=orange><b>GameManager:</b></color> Difficulty level {_difficultyLevel} - MaxEnemies: {newMaxEnemies}, SpawnInterval: {newSpawnInterval:F2}s");
     }
 
-    public void PauseGame()
+    private void OnPlayerDied()
     {
-        _isPaused = true;
-        Time.timeScale = 0f;
+        _gameOver = true;
+        EnemyManager.Instance?.StopSpawning(); // stop spawning new enemies when the player dies
+        Debug.Log($"<color=red><b>GameManager:</b></color> Game Over - Kills: {_killCount}, Difficulty: {_difficultyLevel}");
     }
-
-    public void ResumeGame()
-    {
-        _isPaused = false;
-        Time.timeScale = 1f;
-    }
-
-    public float GetElapsedTime() => _elapsedTime;
 
     private void OnDestroy()
     {
-        if (Instance == this)
-            Instance = null;
+        if (EnemyManager.Instance != null)
+            EnemyManager.Instance.OnKillCountChanged -= OnKillCountChanged;
     }
-    #endregion
 }
-
-#region Timer Class
-public class GameTimer
-{
-    public int Minutes { get; private set; }
-    public int Seconds { get; private set; }
-    public int Milliseconds { get; private set; }
-
-    public void UpdateTime(float totalSeconds)
-    {
-        Minutes = Mathf.FloorToInt(totalSeconds / 60f);
-        Seconds = Mathf.FloorToInt(totalSeconds % 60f);
-        Milliseconds = Mathf.FloorToInt((totalSeconds * 100f) % 100f);
-    }
-
-    public void Reset()
-    {
-        Minutes = 0;
-        Seconds = 0;
-        Milliseconds = 0;
-    }
-
-    public override string ToString() => $"{Minutes:00}:{Seconds:00}:{Milliseconds:00}";
-}
-#endregion

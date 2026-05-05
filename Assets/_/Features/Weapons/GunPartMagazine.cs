@@ -1,7 +1,5 @@
 using UnityEngine;
 
-using UnityEngine;
-
 [CreateAssetMenu(fileName = "Magazine", menuName = "Gun Parts/Magazine")]
 public class GunPartMagazine : ScriptableObject
 {

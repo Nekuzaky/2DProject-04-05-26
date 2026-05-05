@@ -9,12 +9,22 @@ public class EnemySpawner : MonoBehaviour
     [Header("<color=cyan><b><size=15>Spawn Settings</size></b></color>")]
     [SerializeField] private float _spawnInterval = 5f;
     [SerializeField] private int _maxEnemies = 10;
+
+    public float BaseSpawnInterval => _baseSpawnInterval;
     [SerializeField] private float _spawnDistanceMin = 5f;
     [SerializeField] private float _spawnDistanceMax = 10f;
 
     private float _spawnTimer;
     private int _currentEnemyCount;
     private Transform _playerTransform;
+    private int _baseMaxEnemies;
+    private float _baseSpawnInterval;
+
+    private void Awake()
+    {
+        _baseMaxEnemies = _maxEnemies;
+        _baseSpawnInterval = _spawnInterval;
+    }
 
     private void Start()
     {
@@ -62,6 +72,12 @@ public class EnemySpawner : MonoBehaviour
 
     public int GetCurrentEnemyCount() => _currentEnemyCount;
     public int GetMaxEnemies() => _maxEnemies;
+
+    public void SetDifficulty(int additionalMaxEnemies, float spawnInterval)
+    {
+        _maxEnemies = _baseMaxEnemies + additionalMaxEnemies;
+        _spawnInterval = spawnInterval;
+    }
 
     private void OnDrawGizmosSelected()
     {

@@ -1,7 +1,5 @@
 using UnityEngine;
 
-using UnityEngine;
-
 [CreateAssetMenu(fileName = "Trigger", menuName = "Gun Parts/Trigger")]
 public class GunPartTrigger : ScriptableObject
 {
