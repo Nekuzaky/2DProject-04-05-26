@@ -6,6 +6,8 @@ public class EnemyManager : MonoBehaviour
 
     [Header("<color=yellow><b><size=15>Spawners</size></b></color>")]
     [SerializeField] private EnemySpawner[] _spawners;
+    [SerializeField] private bool _spawningEnabled = true;
+    [SerializeField] private bool[] _spawnerEnabled;
 
     public event System.Action<int> OnEnemyCountChanged;
     public event System.Action<int> OnKillCountChanged;
@@ -15,6 +17,7 @@ public class EnemyManager : MonoBehaviour
 
     private int _killCount;
     public int KillCount => _killCount;
+    public bool SpawningEnabled => _spawningEnabled;
 
     private void Awake()
     {
@@ -30,6 +33,9 @@ public class EnemyManager : MonoBehaviour
     {
         if (_spawners == null || _spawners.Length == 0)
             _spawners = FindObjectsByType<EnemySpawner>(FindObjectsSortMode.None);
+
+        EnsureSpawnerStateArray();
+        ApplySpawnState();
     }
 
     private void Update()
@@ -47,14 +53,51 @@ public class EnemyManager : MonoBehaviour
 
     public void StartSpawning()
     {
-        foreach (EnemySpawner spawner in _spawners)
-            if (spawner != null) spawner.enabled = true;
+        SetSpawningEnabled(true);
     }
 
     public void StopSpawning()
     {
-        foreach (EnemySpawner spawner in _spawners)
-            if (spawner != null) spawner.enabled = false;
+        SetSpawningEnabled(false);
+    }
+
+    public void SetSpawningEnabled(bool isEnabled)
+    {
+        _spawningEnabled = isEnabled;
+        ApplySpawnState();
+    }
+
+    public void SetSpawnerEnabled(int spawnerIndex, bool isEnabled)
+    {
+        EnsureSpawnerStateArray();
+        if (spawnerIndex < 0 || spawnerIndex >= _spawnerEnabled
+    .Length) return;
+
+        _spawnerEnabled
+    [spawnerIndex] = isEnabled;
+        ApplySpawnState();
+    }
+
+    public bool IsSpawnerEnabled(int spawnerIndex)
+    {
+        EnsureSpawnerStateArray();
+        if (spawnerIndex < 0 || spawnerIndex >= _spawnerEnabled
+    .Length) return false;
+        return _spawnerEnabled
+    [spawnerIndex];
+    }
+
+    public void SetSpawnerEnabled(EnemySpawner spawner, bool isEnabled)
+    {
+        if (spawner == null || _spawners == null) return;
+
+        for (int i = 0; i < _spawners.Length; i++)
+        {
+            if (_spawners[i] != spawner) continue;
+
+            SetSpawnerEnabled(i, isEnabled);
+            return;
+        }
     }
 
     public void AddKill()
@@ -77,5 +120,53 @@ public class EnemyManager : MonoBehaviour
     {
         foreach (EnemySpawner spawner in _spawners)
             if (spawner != null) spawner.SetDifficulty(additionalMaxEnemies, spawnInterval);
+    }
+
+    private void ApplySpawnState()
+    {
+        if (_spawners == null) return;
+        EnsureSpawnerStateArray();
+
+        for (int i = 0; i < _spawners.Length; i++)
+        {
+            EnemySpawner spawner = _spawners[i];
+            if (spawner == null) continue;
+
+            spawner.enabled = _spawningEnabled && _spawnerEnabled
+        [i];
+        }
+    }
+
+    private void EnsureSpawnerStateArray()
+    {
+        int length = _spawners != null ? _spawners.Length : 0;
+
+        if (_spawnerEnabled
+     != null && _spawnerEnabled
+    .Length == length)
+            return;
+
+        bool[] previous = _spawnerEnabled
+    ;
+        _spawnerEnabled
+     = new bool[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            bool defaultValue = true;
+            if (previous != null && i < previous.Length)
+                defaultValue = previous[i];
+
+            _spawnerEnabled
+        [i] = defaultValue;
+        }
+    }
+
+    private void OnValidate()
+    {
+        EnsureSpawnerStateArray();
+
+        if (Application.isPlaying)
+            ApplySpawnState();
     }
 }
