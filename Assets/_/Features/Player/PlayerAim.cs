@@ -7,7 +7,7 @@ public class PlayerAim : MonoBehaviour
     [SerializeField] private SpriteRenderer _weaponRenderer;
 
     [Header("<color=cyan><b><size=15>Settings</size></b></color>")]
-    [SerializeField] private float _weaponDistance = 0.5f;
+    [SerializeField] private float _weaponDistance = 2f;
 
     [Header("<color=yellow><b><size=15>Input</size></b></color>")]
     [SerializeField] private float _stickDeadzone = 0.2f;

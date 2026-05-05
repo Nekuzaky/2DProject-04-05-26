@@ -157,6 +157,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityHealth
   _maxHealth: 30
+  _deathEffect: {fileID: 5079618571052215626, guid: 65c8fa6c3fa2aff44bc31f6bcd38eaee, type: 3}
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []

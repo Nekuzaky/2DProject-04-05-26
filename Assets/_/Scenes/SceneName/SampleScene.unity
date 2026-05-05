@@ -918,6 +918,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityHealth
   _maxHealth: 100
+  _deathEffect: {fileID: 5079618571052215626, guid: ea3b9b8d1ce5c5f4e912bb137c5cdb0d, type: 3}
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -970,7 +971,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAim
   _aimPivot: {fileID: 489146980}
   _weaponRenderer: {fileID: 0}
-  _weaponDistance: 0.5
+  _weaponDistance: 0.61
   _stickDeadzone: 0.2
 --- !u!114 &572839180
 MonoBehaviour:
@@ -1286,6 +1287,7 @@ Transform:
   m_Children:
   - {fileID: 1227279433}
   - {fileID: 564384492}
+  - {fileID: 1501526043}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1062122148
@@ -1645,12 +1647,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1501526040}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -5.69172, y: -1.73063, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 756445302}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1618356627
 GameObject:
@@ -1748,6 +1750,7 @@ MonoBehaviour:
   _shooterPrefab: {fileID: 8476703885085695931, guid: 5927cb7a7be872f40a5999e3da2f2a38, type: 3}
   _spawnInterval: 1.25
   _maxEnemies: 20
+  _poolWarmupPerPrefab: 5
   _spawnDistanceMin: 3
   _spawnDistanceMax: 10
 --- !u!1 &1801035254
@@ -2215,5 +2218,4 @@ SceneRoots:
   - {fileID: 1991506460}
   - {fileID: 92107926}
   - {fileID: 340938104}
-  - {fileID: 1501526043}
   - {fileID: 756445302}

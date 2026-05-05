@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class EnemySpawner : MonoBehaviour
     [Header("<color=cyan><b><size=15>Spawn Settings</size></b></color>")]
     [SerializeField] private float _spawnInterval = 5f;
     [SerializeField] private int _maxEnemies = 10;
+    [SerializeField] private int _poolWarmupPerPrefab = 5;
 
     public float BaseSpawnInterval => _baseSpawnInterval;
     [SerializeField] private float _spawnDistanceMin = 5f;
@@ -19,11 +21,14 @@ public class EnemySpawner : MonoBehaviour
     private Transform _playerTransform;
     private int _baseMaxEnemies;
     private float _baseSpawnInterval;
+    private readonly Dictionary<GameObject, Queue<GameObject>> _enemyPools = new();
 
     private void Awake()
     {
         _baseMaxEnemies = _maxEnemies;
         _baseSpawnInterval = _spawnInterval;
+        InitializePool(_meleePrefab);
+        InitializePool(_shooterPrefab);
     }
 
     private void Start()
@@ -49,11 +54,12 @@ public class EnemySpawner : MonoBehaviour
         if (prefab == null) return;
 
         Vector3 spawnPos = GetSpawnPosition();
-        GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity);
-        _currentEnemyCount++;
+        GameObject enemy = GetEnemyFromPool(prefab);
+        if (enemy == null) return;
 
-        if (enemy.TryGetComponent(out EntityHealth health))
-            health.OnDeath.AddListener(OnEnemyDestroyed);
+        enemy.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
+        enemy.SetActive(true);
+        _currentEnemyCount++;
     }
 
     private Vector3 GetSpawnPosition()
@@ -64,19 +70,83 @@ public class EnemySpawner : MonoBehaviour
         return center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
     }
 
-    public void OnEnemyDestroyed()
-    {
-        _currentEnemyCount = Mathf.Max(0, _currentEnemyCount - 1);
-        EnemyManager.Instance?.AddKill();
-    }
-
     public int GetCurrentEnemyCount() => _currentEnemyCount;
     public int GetMaxEnemies() => _maxEnemies;
+
+    public void ReturnEnemyToPool(GameObject enemy, GameObject sourcePrefab)
+    {
+        if (enemy == null) return;
+
+        _currentEnemyCount = Mathf.Max(0, _currentEnemyCount - 1);
+        EnemyManager.Instance?.AddKill();
+
+        enemy.SetActive(false);
+
+        EnemyPoolMember poolMember = enemy.GetComponent<EnemyPoolMember>();
+        if (poolMember == null)
+        {
+            Destroy(enemy);
+            return;
+        }
+
+        GameObject prefab = sourcePrefab;
+        if (prefab == null)
+        {
+            Destroy(enemy);
+            return;
+        }
+
+        if (!_enemyPools.ContainsKey(prefab))
+            _enemyPools[prefab] = new Queue<GameObject>();
+
+        _enemyPools[prefab].Enqueue(enemy);
+    }
 
     public void SetDifficulty(int additionalMaxEnemies, float spawnInterval)
     {
         _maxEnemies = _baseMaxEnemies + additionalMaxEnemies;
         _spawnInterval = spawnInterval;
+    }
+
+    private void InitializePool(GameObject prefab)
+    {
+        if (prefab == null) return;
+        if (_enemyPools.ContainsKey(prefab)) return;
+
+        Queue<GameObject> pool = new Queue<GameObject>();
+        _enemyPools[prefab] = pool;
+
+        for (int i = 0; i < _poolWarmupPerPrefab; i++)
+        {
+            GameObject enemy = CreateEnemyInstance(prefab);
+            enemy.SetActive(false);
+            pool.Enqueue(enemy);
+        }
+    }
+
+    private GameObject GetEnemyFromPool(GameObject prefab)
+    {
+        if (!_enemyPools.ContainsKey(prefab))
+            InitializePool(prefab);
+
+        Queue<GameObject> pool = _enemyPools[prefab];
+        if (pool.Count > 0)
+            return pool.Dequeue();
+
+        return CreateEnemyInstance(prefab);
+    }
+
+    private GameObject CreateEnemyInstance(GameObject prefab)
+    {
+        GameObject enemy = Instantiate(prefab);
+
+        EnemyPoolMember poolMember = enemy.GetComponent<EnemyPoolMember>();
+        if (poolMember == null)
+            poolMember = enemy.AddComponent<EnemyPoolMember>();
+
+        poolMember.SetOwner(this);
+        poolMember.SetSourcePrefab(prefab);
+        return enemy;
     }
 
     private void OnDrawGizmosSelected()
