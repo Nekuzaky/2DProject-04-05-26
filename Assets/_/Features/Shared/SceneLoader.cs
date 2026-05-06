@@ -2,19 +2,23 @@ using UnityEngine;
 
 public class SceneLoader : MonoBehaviour
 {
+    public const string GameScene = "SampleScene";
+    public const string MainMenuScene = "MainMenu";
+    public const string GameOverScene = "GameOver";
+
     [Header("<color=orange><b><size=15>Scene Names</size></b></color>")]
-    [SerializeField] private string _gameScene = "SampleScene";
-    [SerializeField] private string _mainMenuScene = "MainMenu";
-    [SerializeField] private string _gameOverScene = "GameOver";
+    [SerializeField] private string _gameScene = GameScene;
+    [SerializeField] private string _mainMenuScene = MainMenuScene;
+    [SerializeField] private string _gameOverScene = GameOverScene;
+
     public void LoadGameScene()
-    { 
+    {
         LoadScene(_gameScene);
     }
 
     public void LoadMainMenuScene()
     {
         LoadScene(_mainMenuScene);
-        
     }
 
     public void LoadGameOverScene()
@@ -22,9 +26,14 @@ public class SceneLoader : MonoBehaviour
         LoadScene(_gameOverScene);
     }
 
+    public void QuitGame()
+    {
+        GameManager.QuitGame();
+    }
+
     private void LoadScene(string sceneName)
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+        GameManager.LoadSceneByName(sceneName);
     }
 }
 
