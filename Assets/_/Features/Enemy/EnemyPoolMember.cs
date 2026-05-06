@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class EnemyPoolMember : MonoBehaviour
 {
-    private EnemySpawner _ownerSpawner;
     private EntityHealth _health;
     private GameObject _sourcePrefab;
 
@@ -17,11 +16,6 @@ public class EnemyPoolMember : MonoBehaviour
             _health.ResetHealth();
     }
 
-    public void SetOwner(EnemySpawner ownerSpawner)
-    {
-        _ownerSpawner = ownerSpawner;
-    }
-
     public void SetSourcePrefab(GameObject sourcePrefab)
     {
         _sourcePrefab = sourcePrefab;
@@ -29,9 +23,9 @@ public class EnemyPoolMember : MonoBehaviour
 
     public void ReturnToPool()
     {
-        if (_ownerSpawner != null)
+        if (EnemyManager.Instance != null)
         {
-            _ownerSpawner.ReturnEnemyToPool(gameObject, _sourcePrefab);
+            EnemyManager.Instance.ReturnEnemyToPool(gameObject, _sourcePrefab);
             return;
         }
 

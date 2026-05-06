@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class PopEffect : MonoBehaviour
 {
-    [SerializeField] private float duration = 0.3f;
-    [SerializeField] private AnimationCurve scaleCurve;
+    [SerializeField] private float _duration = 0.3f;
+    [SerializeField] private AnimationCurve _scaleCurve;
 
-    private float timer;
-    private Vector3 baseScale;
+    private float _timer;
+    private Vector3 _baseScale;
 
     private void Awake()
     {
-        baseScale = transform.localScale;
-        timer = duration;
+        _baseScale = transform.localScale;
+        _timer = _duration;
 
-        if (scaleCurve == null || scaleCurve.length == 0)
+        if (_scaleCurve == null || _scaleCurve.length == 0)
         {
-            scaleCurve = new AnimationCurve(
+            _scaleCurve = new AnimationCurve(
                 new Keyframe(0f, 0f),
                 new Keyframe(0.35f, 1.5f),
                 new Keyframe(1f, 0f)
@@ -31,11 +31,11 @@ public class PopEffect : MonoBehaviour
 
     private void OnUpdateTick()
     {
-        timer -= Time.deltaTime;
-        float t = 1f - Mathf.Clamp01(timer / duration);
-        transform.localScale = baseScale * scaleCurve.Evaluate(t);
+        _timer -= Time.deltaTime;
+        float t = 1f - Mathf.Clamp01(_timer / _duration);
+        transform.localScale = _baseScale * _scaleCurve.Evaluate(t);
 
-        if (timer <= 0f)
+        if (_timer <= 0f)
             Destroy(gameObject);
     }
 

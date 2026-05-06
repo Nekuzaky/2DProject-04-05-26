@@ -11,7 +11,6 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] protected float _attackRange = 1.5f;
     [SerializeField] protected int _attackDamage = 10;
     [SerializeField] protected float _attackCooldown = 1f;
-   
 
     [Header("Target")]
     [SerializeField] private string _targetTag = "Player";
@@ -37,9 +36,15 @@ public class EnemyAI : MonoBehaviour
     protected virtual void Start()
     {
         FindTarget();
+
+        if (UpdateManager.Instance != null)
+        {
+            UpdateManager.Instance.OnUpdate      += OnUpdateTick;
+            UpdateManager.Instance.OnFixedUpdate += OnFixedUpdateTick;
+        }
     }
 
-    protected virtual void Update()
+    protected virtual void OnUpdateTick()
     {
         if (_target == null)
         {
@@ -52,12 +57,10 @@ public class EnemyAI : MonoBehaviour
         UpdateState(distanceToTarget);
 
         if (_currentState == EnemyState.Attack)
-        {
             Attack();
-        }
     }
 
-    private void FixedUpdate()
+    private void OnFixedUpdateTick()
     {
         Move();
     }
@@ -76,17 +79,11 @@ public class EnemyAI : MonoBehaviour
     protected virtual void UpdateState(float distanceToTarget)
     {
         if (distanceToTarget <= _attackRange)
-        {
             _currentState = EnemyState.Attack;
-        }
         else if (distanceToTarget <= _detectionRange)
-        {
             _currentState = EnemyState.Chase;
-        }
         else
-        {
             _currentState = EnemyState.Idle;
-        }
     }
 
     private void Move()
@@ -97,7 +94,7 @@ public class EnemyAI : MonoBehaviour
         {
             Vector2 direction = (_target.position - transform.position).normalized;
             _rb.linearVelocity = direction * _moveSpeed;
-            
+
             Debug.DrawRay(transform.position, direction * 2f, Color.green);
         }
         else
@@ -107,6 +104,15 @@ public class EnemyAI : MonoBehaviour
     }
 
     protected virtual void Attack() { }
+
+    protected virtual void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+        {
+            UpdateManager.Instance.OnUpdate      -= OnUpdateTick;
+            UpdateManager.Instance.OnFixedUpdate -= OnFixedUpdateTick;
+        }
+    }
 
     protected virtual void OnDrawGizmosSelected()
     {

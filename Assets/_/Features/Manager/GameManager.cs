@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     {
         if (EnemyManager.Instance != null)
         {
-            EnemyManager.Instance.SetBaseMaxEnemiesPerSpawner(_baseMaxEnemiesPerSpawner);
+            EnemyManager.Instance.SetBaseMaxEnemies(_baseMaxEnemiesPerSpawner);
             EnemyManager.Instance.OnKillCountChanged += OnKillCountChanged;
         }
 

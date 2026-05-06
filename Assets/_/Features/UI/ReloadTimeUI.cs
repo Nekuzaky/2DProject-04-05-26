@@ -17,7 +17,7 @@ public class ReloadTimeUI : MonoBehaviour
         ResolveReferences();
 
         if (_playerShooter == null)
-            _playerShooter = FindFirstObjectByType<PlayerShooter>();
+            _playerShooter = FindAnyObjectByType<PlayerShooter>();
 
         if (_playerShooter == null)
         {

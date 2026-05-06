@@ -13,6 +13,7 @@ public class EntityHealth : MonoBehaviour
 
     [Header("Events")]
     public UnityEvent<int, int> OnHealthChanged;
+    public UnityEvent OnDamageTaken;
     public UnityEvent OnDeath;
 
     private void Awake()
@@ -28,8 +29,9 @@ public class EntityHealth : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, _maxHealth); // Ensure health doesn't go below 0 or above max
+        _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, _maxHealth);
         OnHealthChanged.Invoke(_currentHealth, _maxHealth);
+        OnDamageTaken.Invoke();
 
         if (_currentHealth == 0)
             Die();

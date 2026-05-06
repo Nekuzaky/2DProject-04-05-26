@@ -1,23 +1,37 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance { get; private set; }
 
-    [Header("<color=yellow><b><size=15>Spawners</size></b></color>")]
-    [SerializeField] private EnemySpawner[] _spawners;
-    [SerializeField] private bool _spawningEnabled = true;
-    [SerializeField] private bool[] _spawnerEnabled;
+    [Header("<color=yellow><b><size=15>Prefabs</size></b></color>")]
+    [SerializeField] private GameObject _meleePrefab;
+    [SerializeField] private GameObject _shooterPrefab;
+
+    [Header("<color=cyan><b><size=15>Spawn Settings</size></b></color>")]
+    [SerializeField] private float _spawnInterval = 5f;
+    [SerializeField] private int _maxEnemies = 10;
+    [SerializeField] private int _poolWarmupPerPrefab = 5;
+    [SerializeField] private float _spawnDistanceMin = 5f;
+    [SerializeField] private float _spawnDistanceMax = 10f;
 
     public event System.Action<int> OnEnemyCountChanged;
     public event System.Action<int> OnKillCountChanged;
 
-    private int _totalEnemyCount;
-    public int TotalEnemyCount => _totalEnemyCount;
+    public int KillCount => _killCount;
+    public int CurrentEnemyCount => _currentEnemyCount;
+    public int MaxEnemies => _maxEnemies;
+    public float BaseSpawnInterval => _baseSpawnInterval;
 
     private int _killCount;
-    public int KillCount => _killCount;
-    public bool SpawningEnabled => _spawningEnabled;
+    private int _currentEnemyCount;
+    private int _baseMaxEnemies;
+    private float _baseSpawnInterval;
+    private float _spawnTimer;
+    private bool _spawningEnabled = true;
+    private Transform _playerTransform;
+    private readonly Dictionary<GameObject, Queue<GameObject>> _enemyPools = new();
 
     private void Awake()
     {
@@ -27,15 +41,16 @@ public class EnemyManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        _baseMaxEnemies    = _maxEnemies;
+        _baseSpawnInterval = _spawnInterval;
+        InitializePool(_meleePrefab);
+        InitializePool(_shooterPrefab);
     }
 
     private void Start()
     {
-        if (_spawners == null || _spawners.Length == 0)
-            _spawners = FindObjectsByType<EnemySpawner>(FindObjectsSortMode.None);
-
-        EnsureSpawnerStateArray();
-        ApplySpawnState();
+        _playerTransform = FindAnyObjectByType<PlayerController>()?.transform;
 
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
@@ -43,164 +58,135 @@ public class EnemyManager : MonoBehaviour
 
     private void OnUpdateTick()
     {
-        int count = 0;
-        foreach (EnemySpawner spawner in _spawners)
-            if (spawner != null) count += spawner.GetCurrentEnemyCount();
+        if (!_spawningEnabled || _currentEnemyCount >= _maxEnemies) return;
 
-        if (count != _totalEnemyCount)
+        _spawnTimer += Time.deltaTime;
+        if (_spawnTimer >= _spawnInterval)
         {
-            _totalEnemyCount = count;
-            OnEnemyCountChanged?.Invoke(_totalEnemyCount);
+            SpawnEnemy();
+            _spawnTimer = 0f;
         }
     }
 
-    public void StartSpawning()
+    private void SpawnEnemy()
     {
-        SetSpawningEnabled(true);
-        Debug.Log($"<color=green><b>EnemyManager:</b></color> StartSpawning called - Spawning Enabled: {_spawningEnabled}");
+        GameObject prefab = Random.value < 0.5f ? _meleePrefab : _shooterPrefab;
+        if (prefab == null) return;
+
+        GameObject enemy = GetEnemyFromPool(prefab);
+        if (enemy == null) return;
+
+        enemy.transform.SetPositionAndRotation(GetSpawnPosition(), Quaternion.identity);
+        enemy.SetActive(true);
+        _currentEnemyCount++;
+        OnEnemyCountChanged?.Invoke(_currentEnemyCount);
     }
 
-    public void StopSpawning()
+    private Vector3 GetSpawnPosition()
     {
-        SetSpawningEnabled(false);
-        Debug.Log($"<color=red><b>EnemyManager:</b></color> StopSpawning called - Spawning Enabled: {_spawningEnabled}");
+        Vector3 center = _playerTransform != null ? _playerTransform.position : Vector3.zero;
+        float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+        float dist  = Random.Range(_spawnDistanceMin, _spawnDistanceMax);
+        return center + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle)) * dist;
     }
 
-    public void SetSpawningEnabled(bool isEnabled)
+    public void ReturnEnemyToPool(GameObject enemy, GameObject sourcePrefab)
     {
-        _spawningEnabled = isEnabled;
-        ApplySpawnState();
-    }
+        if (enemy == null) return;
 
-    public void SetSpawnerEnabled(int spawnerIndex, bool isEnabled)
-    {
-        EnsureSpawnerStateArray();
-        if (spawnerIndex < 0 || spawnerIndex >= _spawnerEnabled
-    .Length) return;
+        _currentEnemyCount = Mathf.Max(0, _currentEnemyCount - 1);
+        OnEnemyCountChanged?.Invoke(_currentEnemyCount);
+        AddKill();
 
-        _spawnerEnabled
-    [spawnerIndex] = isEnabled;
-        ApplySpawnState();
-    }
+        enemy.SetActive(false);
 
-    public bool IsSpawnerEnabled(int spawnerIndex)
-    {
-        EnsureSpawnerStateArray();
-        if (spawnerIndex < 0 || spawnerIndex >= _spawnerEnabled
-    .Length) return false;
-        return _spawnerEnabled
-    [spawnerIndex];
-    }
-
-    public void SetSpawnerEnabled(EnemySpawner spawner, bool isEnabled)
-    {
-        if (spawner == null || _spawners == null) return;
-
-        for (int i = 0; i < _spawners.Length; i++)
+        if (sourcePrefab == null)
         {
-            if (_spawners[i] != spawner) continue;
-
-            SetSpawnerEnabled(i, isEnabled);
+            Destroy(enemy);
             return;
         }
+
+        if (!_enemyPools.ContainsKey(sourcePrefab))
+            _enemyPools[sourcePrefab] = new Queue<GameObject>();
+
+        _enemyPools[sourcePrefab].Enqueue(enemy);
     }
 
-    public void AddKill()
+    private void AddKill()
     {
         _killCount++;
         OnKillCountChanged?.Invoke(_killCount);
     }
 
-    public float BaseSpawnInterval
+    public void StartSpawning()  => SetSpawningEnabled(true);
+    public void StopSpawning()   => SetSpawningEnabled(false);
+
+    public void SetSpawningEnabled(bool isEnabled)
     {
-        get
-        {
-            if (_spawners != null && _spawners.Length > 0 && _spawners[0] != null)
-                return _spawners[0].BaseSpawnInterval;
-            return 5f;
-        }
+        _spawningEnabled = isEnabled;
     }
 
     public void SetDifficulty(int additionalMaxEnemies, float spawnInterval)
     {
-        foreach (EnemySpawner spawner in _spawners)
-        {
-            if (spawner != null)
-                spawner.SetDifficulty(additionalMaxEnemies, spawnInterval);
-        }
-
-        Debug.Log($"<color=orange><b>EnemyManager:</b></color> SetDifficulty called - Additional Max Enemies: {additionalMaxEnemies} - Spawn Interval: {spawnInterval}");
+        _maxEnemies    = _baseMaxEnemies + additionalMaxEnemies;
+        _spawnInterval = spawnInterval;
     }
 
-    public void SetBaseMaxEnemiesPerSpawner(int baseMaxEnemies)
+    public void SetBaseMaxEnemies(int baseMaxEnemies)
     {
-        if (_spawners == null) return;
-
-        int clampedBase = Mathf.Max(1, baseMaxEnemies);
-        foreach (EnemySpawner spawner in _spawners)
-        {
-            if (spawner != null)
-                spawner.SetBaseMaxEnemies(clampedBase);
-        }
-
-        Debug.Log($"<color=orange><b>EnemyManager:</b></color> Base max enemies per spawner set to {clampedBase}");
+        _baseMaxEnemies = Mathf.Max(1, baseMaxEnemies);
+        _maxEnemies     = _baseMaxEnemies;
     }
 
-    private void ApplySpawnState()
+    private void InitializePool(GameObject prefab)
     {
-        if (_spawners == null) return;
-        EnsureSpawnerStateArray();
+        if (prefab == null) return;
+        if (_enemyPools.ContainsKey(prefab)) return;
 
-        for (int i = 0; i < _spawners.Length; i++)
+        Queue<GameObject> pool = new Queue<GameObject>();
+        _enemyPools[prefab] = pool;
+
+        for (int i = 0; i < _poolWarmupPerPrefab; i++)
         {
-            EnemySpawner spawner = _spawners[i];
-            if (spawner == null) continue;
-
-            spawner.enabled = _spawningEnabled && _spawnerEnabled
-        [i];
+            GameObject enemy = CreateEnemyInstance(prefab);
+            enemy.SetActive(false);
+            pool.Enqueue(enemy);
         }
     }
 
-    private void EnsureSpawnerStateArray()
+    private GameObject GetEnemyFromPool(GameObject prefab)
     {
-        int length = _spawners != null ? _spawners.Length : 0;
+        if (!_enemyPools.ContainsKey(prefab))
+            InitializePool(prefab);
 
-        if (_spawnerEnabled
-     != null && _spawnerEnabled
-    .Length == length)
-            return;
-
-        bool[] previous = _spawnerEnabled
-    ;
-        _spawnerEnabled
-     = new bool[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            bool defaultValue = true;
-            if (previous != null && i < previous.Length)
-                defaultValue = previous[i];
-
-            _spawnerEnabled
-        [i] = defaultValue;
-        }
+        Queue<GameObject> pool = _enemyPools[prefab];
+        return pool.Count > 0 ? pool.Dequeue() : CreateEnemyInstance(prefab);
     }
 
-    private void OnValidate()
+    private GameObject CreateEnemyInstance(GameObject prefab)
     {
-        EnsureSpawnerStateArray();
+        GameObject enemy = Instantiate(prefab);
 
-        if (Application.isPlaying)
-            ApplySpawnState();
+        EnemyPoolMember poolMember = enemy.GetComponent<EnemyPoolMember>();
+        if (poolMember == null)
+            poolMember = enemy.AddComponent<EnemyPoolMember>();
 
-        Debug.Log($"<color=orange><b>EnemyManager:</b></color> OnValidate called - SpawningEnabled: {_spawningEnabled} - Spawner States: {string.Join(", ", _spawnerEnabled)}");
+        poolMember.SetSourcePrefab(prefab);
+        return enemy;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Vector3 center = _playerTransform != null ? _playerTransform.position : transform.position;
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(center, _spawnDistanceMin);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(center, _spawnDistanceMax);
     }
 
     private void OnDestroy()
     {
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
-
-        Debug.Log($"<color=red><b>EnemyManager:</b></color> OnDestroy called - Unsubscribed from UpdateManager");
     }
 }

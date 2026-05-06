@@ -119,57 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &62742923
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 62742924}
-  - component: {fileID: 62742925}
-  m_Layer: 0
-  m_Name: EnemySpawner2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &62742924
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 62742923}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.13835, y: 0.15932995, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1991506460}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &62742925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 62742923}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3837137045028384089929322c8d1165, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  _meleePrefab: {fileID: 8638469823503880507, guid: 5568221e4fe323045aa0918ca562e05d, type: 3}
-  _shooterPrefab: {fileID: 8476703885085695931, guid: 5927cb7a7be872f40a5999e3da2f2a38, type: 3}
-  _spawnInterval: 5
-  _maxEnemies: 10
-  _poolWarmupPerPrefab: 5
-  _spawnDistanceMin: 5
-  _spawnDistanceMax: 10
 --- !u!1 &82681026
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,11 +364,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70652e681d2c72f4aa2eb66560ad5c9c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
-  _spawners:
-  - {fileID: 1771331943}
-  - {fileID: 62742925}
-  _spawningEnabled: 1
-  _spawnerEnabled: 0100
+  _meleePrefab: {fileID: 8638469823503880507, guid: 5568221e4fe323045aa0918ca562e05d, type: 3}
+  _shooterPrefab: {fileID: 8476703885085695931, guid: 5927cb7a7be872f40a5999e3da2f2a38, type: 3}
+  _spawnInterval: 5
+  _maxEnemies: 10
+  _poolWarmupPerPrefab: 5
+  _spawnDistanceMin: 5
+  _spawnDistanceMax: 10
 --- !u!1 &489146979
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,6 +927,9 @@ MonoBehaviour:
   OnHealthChanged:
     m_PersistentCalls:
       m_Calls: []
+  OnDamageTaken:
+    m_PersistentCalls:
+      m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -1481,6 +1435,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -1527,7 +1482,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1227279432}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 5.7
@@ -1579,7 +1534,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -1797,6 +1752,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31de3b3acc3ff77479195d3df1bf9349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  _baseMaxEnemiesPerSpawner: 10
   _killsPerDifficultyStep: 10
   _enemyCountIncreasePerStep: 5
   _spawnIntervalDecreasePerStep: 0.3
@@ -1827,57 +1783,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   _minDifficultyMultiplier: 0.5
   _maxDifficultyMultiplier: 5
---- !u!1 &1771331941
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1771331942}
-  - component: {fileID: 1771331943}
-  m_Layer: 0
-  m_Name: EnemySpawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1771331942
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1771331941}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1991506460}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1771331943
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1771331941}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3837137045028384089929322c8d1165, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
-  _meleePrefab: {fileID: 8638469823503880507, guid: 5568221e4fe323045aa0918ca562e05d, type: 3}
-  _shooterPrefab: {fileID: 8476703885085695931, guid: 5927cb7a7be872f40a5999e3da2f2a38, type: 3}
-  _spawnInterval: 1.25
-  _maxEnemies: 20
-  _poolWarmupPerPrefab: 5
-  _spawnDistanceMin: 3
-  _spawnDistanceMax: 10
 --- !u!1 &1801035254
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,8 +2255,6 @@ Transform:
   m_Children:
   - {fileID: 1618356628}
   - {fileID: 476198287}
-  - {fileID: 1771331942}
-  - {fileID: 62742924}
   - {fileID: 1587900163}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
