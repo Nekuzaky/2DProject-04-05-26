@@ -2,9 +2,12 @@ using UnityEngine;
 
 public class EnemyPoolMember : MonoBehaviour
 {
+    #region State
     private EntityHealth _health;
     private GameObject _sourcePrefab;
+    #endregion
 
+    #region Lifecycle
     private void Awake()
     {
         _health = GetComponent<EntityHealth>();
@@ -15,7 +18,9 @@ public class EnemyPoolMember : MonoBehaviour
         if (_health != null)
             _health.ResetHealth();
     }
+    #endregion
 
+    #region Pool Management
     public void SetSourcePrefab(GameObject sourcePrefab)
     {
         _sourcePrefab = sourcePrefab;
@@ -31,4 +36,5 @@ public class EnemyPoolMember : MonoBehaviour
 
         gameObject.SetActive(false);
     }
+    #endregion
 }

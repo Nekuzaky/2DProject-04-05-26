@@ -1,21 +1,28 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class EntityHealth : MonoBehaviour
-    
 {
+    #region Inspector Settings
     [Header("<color=red><b><size=15>Stats</size></b></color>")]
     [SerializeField] private int _maxHealth = 100;
-    private int _currentHealth;
 
     [Header("<color=magenta><b><size=15>Effects</size></b></color>")]
     [SerializeField] private GameObject _deathEffect;
+    #endregion
 
+    #region Events
     [Header("Events")]
     public UnityEvent<int, int> OnHealthChanged;
     public UnityEvent OnDamageTaken;
     public UnityEvent OnDeath;
+    #endregion
 
+    #region State
+    private int _currentHealth;
+    #endregion
+
+    #region Lifecycle
     private void Awake()
     {
         _currentHealth = _maxHealth;
@@ -26,7 +33,9 @@ public class EntityHealth : MonoBehaviour
         if (_currentHealth <= 0)
             _currentHealth = _maxHealth;
     }
+    #endregion
 
+    #region Damage & Healing
     public void TakeDamage(int amount)
     {
         _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, _maxHealth);
@@ -39,11 +48,18 @@ public class EntityHealth : MonoBehaviour
 
     public void Heal(int amount)
     {
-        _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, _maxHealth); // Ensure health doesn't go below 0 or above max
+        _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, _maxHealth);
         OnHealthChanged.Invoke(_currentHealth, _maxHealth);
     }
 
-   
+    public void ResetHealth()
+    {
+        _currentHealth = _maxHealth;
+        OnHealthChanged.Invoke(_currentHealth, _maxHealth);
+    }
+    #endregion
+
+    #region Death
     private void Die()
     {
         if (_deathEffect != null)
@@ -66,16 +82,12 @@ public class EntityHealth : MonoBehaviour
         }
 
         Destroy(gameObject);
-        Debug.Log("<color=red><b>EntityHealth:</b></color> Entity has died: " + gameObject.name); // Log the name of the entity that died
-
+        Debug.Log("<color=red><b>EntityHealth:</b></color> Entity has died: " + gameObject.name);
     }
+    #endregion
 
-    public void ResetHealth()
-    {
-        _currentHealth = _maxHealth;
-        OnHealthChanged.Invoke(_currentHealth, _maxHealth);
-    }
-    
+    #region Properties
     public int GetCurrentHealth() => _currentHealth;
     public int GetMaxHealth() => _maxHealth;
+    #endregion
 }

@@ -2,18 +2,25 @@ using UnityEngine;
 
 public class PlayerAim : MonoBehaviour
 {
+    #region Inspector Settings - References
     [Header("<color=cyan><b><size=15>References</size></b></color>")]
     [SerializeField] private Transform _aimPivot;
     [SerializeField] private SpriteRenderer _weaponRenderer;
+    #endregion
 
+    #region Inspector Settings - Configuration
     [Header("<color=cyan><b><size=15>Settings</size></b></color>")]
     [SerializeField] private float _weaponDistance = 2f;
 
     [Header("<color=yellow><b><size=15>Input</size></b></color>")]
     [SerializeField] private float _stickDeadzone = 0.2f;
+    #endregion
 
+    #region State
     private Camera _mainCamera;
+    #endregion
 
+    #region Lifecycle
     private void Awake()
     {
         _mainCamera = Camera.main;
@@ -32,7 +39,9 @@ public class PlayerAim : MonoBehaviour
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
     }
+    #endregion
 
+    #region Input & Aiming
     private void OnUpdateTick()
     {
         if (_aimPivot == null || _mainCamera == null) return;
@@ -47,7 +56,6 @@ public class PlayerAim : MonoBehaviour
         _aimPivot.rotation = Quaternion.Euler(0, 0, angle);
         _aimPivot.localScale = Vector3.one;
 
-        // flipY sur le SpriteRenderer évite le bug de culling de scale négatif
         if (_weaponRenderer) _weaponRenderer.flipY = isFacingLeft;
 
         _aimPivot.position = (Vector2)transform.position + aimDir.normalized * _weaponDistance;
@@ -65,10 +73,13 @@ public class PlayerAim : MonoBehaviour
         Vector2 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         return mouseWorld - (Vector2)transform.position;
     }
+    #endregion
 
+    #region Cleanup
     private void OnDestroy()
     {
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
+    #endregion
 }

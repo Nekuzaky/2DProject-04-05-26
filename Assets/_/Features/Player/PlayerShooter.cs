@@ -3,24 +3,31 @@ using UnityEngine.Events;
 
 public class PlayerShooter : MonoBehaviour
 {
+    #region Inspector Settings
     [Header("<color=cyan><b><size=15>References</size></b></color>")]
     [SerializeField] private Transform _firePoint;
     [SerializeField] private GameObject _projectilePrefab;
     [SerializeField] private WeaponStats _weaponStats;
+    #endregion
 
+    #region State
     private int _maxAmmo;
     private int _currentAmmo;
     private float _nextFireTime = 0f;
     private bool _isReloading = false;
     private float _reloadStartTime;
     private float _reloadDuration;
+    #endregion
 
+    #region Events & Properties
     public float ReloadProgress => _isReloading ? Mathf.Clamp01((Time.time - _reloadStartTime) / _reloadDuration) : 0f;
 
     public UnityEvent<int, int> OnAmmoChanged;
     public event System.Action<float> OnReloadStart;
     public event System.Action OnReloadFinished;
+    #endregion
 
+    #region Lifecycle
     private void Start()
     {
         _maxAmmo = _weaponStats != null ? _weaponStats.FinalAmmoCapacity : _currentAmmo;
@@ -30,7 +37,9 @@ public class PlayerShooter : MonoBehaviour
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
     }
+    #endregion
 
+    #region Input & Firing
     private void OnUpdateTick()
     {
         bool reloadPressed = Input.GetKeyDown(KeyCode.R) || Input.GetKeyDown(KeyCode.JoystickButton3);
@@ -55,7 +64,9 @@ public class PlayerShooter : MonoBehaviour
             }
         }
     }
+    #endregion
 
+    #region Reload System
     private void StartReload()
     {
         if (_isReloading) return;
@@ -76,9 +87,10 @@ public class PlayerShooter : MonoBehaviour
         OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
         OnReloadFinished?.Invoke();
         Debug.Log("<color=green><b>PlayerShooter:</b></color> Reloaded");
-
     }
+    #endregion
 
+    #region Shooting
     private void Shoot()
     {
         _currentAmmo--;
@@ -97,14 +109,17 @@ public class PlayerShooter : MonoBehaviour
         }
         else if (bullet.TryGetComponent(out Rigidbody2D rb))
         {
-        float speed = _weaponStats != null ? _weaponStats.ProjectileSpeed : 10f;
+            float speed = _weaponStats != null ? _weaponStats.ProjectileSpeed : 10f;
             rb.linearVelocity = direction * speed;
         }
     }
+    #endregion
 
+    #region Cleanup
     private void OnDestroy()
     {
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
+    #endregion
 }

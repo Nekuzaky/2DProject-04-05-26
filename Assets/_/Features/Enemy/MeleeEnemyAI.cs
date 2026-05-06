@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class MeleeEnemyAI : EnemyAI
 {
+    #region Attacking
     protected override void Attack()
     {
         if (Time.time < _nextAttackTime) return;
@@ -14,4 +15,5 @@ public class MeleeEnemyAI : EnemyAI
             Debug.Log("<color=red><b>MeleeEnemyAI:</b></color> Attacked " + _target.name + " for " + _attackDamage + " damage.");
         }
     }
+    #endregion
 }

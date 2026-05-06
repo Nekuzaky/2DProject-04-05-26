@@ -2,11 +2,14 @@ using UnityEngine;
 
 public class EnemyShooterAI : EnemyAI
 {
+    #region Inspector Settings
     [Header("<color=cyan><b><size=15>Shooter Settings</size></b></color>")]
     [SerializeField] private GameObject _projectilePrefab;
     [SerializeField] private Transform _firePoint;
     [SerializeField] private float _shootRange = 6f;
+    #endregion
 
+    #region AI Logic
     protected override void UpdateState(float distanceToTarget)
     {
         if (distanceToTarget <= _attackRange)
@@ -26,7 +29,9 @@ public class EnemyShooterAI : EnemyAI
             CurrentState = EnemyState.Idle;
         }
     }
+    #endregion
 
+    #region Attacking
     protected override void Attack()
     {
         if (Time.time >= _nextAttackTime)
@@ -53,7 +58,9 @@ public class EnemyShooterAI : EnemyAI
 
         Debug.Log("<color=red><b>EnemyShooterAI:</b></color> Shot at " + _target.name);
     }
+    #endregion
 
+    #region Debug
     protected override void OnDrawGizmosSelected()
     {
         base.OnDrawGizmosSelected();
@@ -61,4 +68,5 @@ public class EnemyShooterAI : EnemyAI
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, _shootRange);
     }
+    #endregion
 }

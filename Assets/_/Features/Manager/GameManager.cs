@@ -2,8 +2,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    #region Singleton
     public static GameManager Instance { get; private set; }
+    #endregion
 
+    #region Inspector Settings
     [Header("<color=orange><b><size=15>Spawn Base Settings</size></b></color>")]
     [SerializeField] private int _baseMaxEnemiesPerSpawner = 10;
 
@@ -16,17 +19,23 @@ public class GameManager : MonoBehaviour
         AnimationCurve.Linear(0f, 1f, 20f, 2f);
     [SerializeField] private float _minDifficultyMultiplier = 0.5f;
     [SerializeField] private float _maxDifficultyMultiplier = 5f;
+    #endregion
 
+    #region State
     private int _killCount;
     private int _difficultyLevel;
     private bool _gameOver;
     private float _elapsedTime;
+    #endregion
 
+    #region Properties
     public int KillCount => _killCount;
     public int DifficultyLevel => _difficultyLevel;
     public bool IsGameOver => _gameOver;
-    public System.TimeSpan Timer => System.TimeSpan.FromSeconds(_elapsedTime); // we can display this in the UI as minutes:seconds
+    public System.TimeSpan Timer => System.TimeSpan.FromSeconds(_elapsedTime);
+    #endregion
 
+    #region Lifecycle
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -55,6 +64,9 @@ public class GameManager : MonoBehaviour
         ApplyDifficulty();
     }
 
+    #endregion
+
+    #region Game State
     private void OnUpdateTick()
     {
         if (!_gameOver)
@@ -72,7 +84,9 @@ public class GameManager : MonoBehaviour
             ApplyDifficulty();
         }
     }
-    #region Difficulty
+    #endregion
+
+    #region Difficulty System
     private void ApplyDifficulty() // this is where we calculate the new difficulty settings and apply them to the EnemyManager
     {
         if (EnemyManager.Instance == null) return;
@@ -103,13 +117,16 @@ public class GameManager : MonoBehaviour
     {
         _gameOver = true;
         EnemyManager.Instance?.StopSpawning();
+        GameRunSummary.Save(_killCount, _difficultyLevel, Timer);
         Debug.Log($"<color=red><b>GameManager:</b></color> Game Over - Kills: {_killCount}, Difficulty: {_difficultyLevel}");
         
-        // Load game over scene
+        // Load game over scene with cached run summary
         if (GameSceneManager.Instance != null)
             GameSceneManager.Instance.LoadGameOver();
     }
+    #endregion
 
+    #region Cleanup
     private void OnDestroy()
     {
         if (EnemyManager.Instance != null)

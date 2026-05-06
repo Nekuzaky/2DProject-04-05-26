@@ -3,10 +3,13 @@ using UnityEngine.UI;
 
 public class HealthBarUI : MonoBehaviour
 {
+    #region Inspector Settings
     [Header("<color=red><size=15>References</size></b></color>")]
-    [SerializeField] private Slider _healthSlider;
+    [SerializeField] private Slider _healthSlider; 
     [SerializeField] private EntityHealth _entityHealth;
+    #endregion
 
+    #region Lifecycle
     private void Start()
     {
         if (_entityHealth == null)
@@ -33,7 +36,9 @@ public class HealthBarUI : MonoBehaviour
             _entityHealth.OnHealthChanged.RemoveListener(UpdateHealthBar);
         }
     }
+    #endregion
 
+    #region UI Updates
     private void InitializeHealthBar()
     {
         if (_healthSlider == null) return;
@@ -49,4 +54,5 @@ public class HealthBarUI : MonoBehaviour
         _healthSlider.maxValue = maxHealth;
         _healthSlider.value = currentHealth;
     }
+    #endregion
 }

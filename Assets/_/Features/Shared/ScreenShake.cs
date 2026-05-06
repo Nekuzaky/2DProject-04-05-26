@@ -2,15 +2,20 @@ using UnityEngine;
 
 public class ScreenShake : MonoBehaviour
 {
+    #region Singleton
     public static ScreenShake Instance { get; private set; }
+    #endregion
 
+    #region State
     private Vector3      _basePosition;
     private float        _magnitude;
     private float        _duration;
     private float        _timer;
     private bool         _isShaking;
     private EntityHealth _playerHealth;
+    #endregion
 
+    #region Lifecycle
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -27,7 +32,9 @@ public class ScreenShake : MonoBehaviour
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
     }
+    #endregion
 
+    #region Shake Control
     public void Shake(float duration, float magnitude)
     {
         _duration  = duration;
@@ -38,7 +45,9 @@ public class ScreenShake : MonoBehaviour
 
     public void ShakeLight() => Shake(0.15f, 0.10f);
     public void ShakeHeavy() => Shake(0.30f, 0.30f);
+    #endregion
 
+    #region Update
     private void OnUpdateTick()
     {
         if (!_isShaking) return;
@@ -57,7 +66,9 @@ public class ScreenShake : MonoBehaviour
             _isShaking = false;
         }
     }
+    #endregion
 
+    #region Cleanup
     private void OnDestroy()
     {
         if (_playerHealth != null)
@@ -66,4 +77,5 @@ public class ScreenShake : MonoBehaviour
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
+    #endregion
 }

@@ -4,15 +4,20 @@ using UnityEngine.EventSystems;
 
 public class PauseUI : MonoBehaviour
 {
+    #region Inspector Settings
     [Header("<color=cyan><b><size=15>Panel</size></b></color>")]
     [SerializeField] private GameObject _pausePanel;
 
     [Header("<color=cyan><b><size=15>Buttons</size></b></color>")]
     [SerializeField] private Button _resumeButton;
     [SerializeField] private Button _menuButton;
+    #endregion
 
+    #region State
     private bool _isPaused;
+    #endregion
 
+    #region Initialization
     private void Awake()
     {
         EnsureEventSystemInputModule();
@@ -26,9 +31,10 @@ public class PauseUI : MonoBehaviour
         if (_pausePanel != null)
             _pausePanel.SetActive(false);
     }
+    #endregion
 
-
-    private void EnsureEventSystemInputModule()
+    #region Input Handling
+    private void EnsureEventSystemInputModule() // Utility method to ensure there is an EventSystem with an input module in the scene for UI interaction, adds one if missing
     {
         EventSystem eventSystem = FindFirstObjectByType<EventSystem>();
         if (eventSystem == null)
@@ -50,7 +56,9 @@ public class PauseUI : MonoBehaviour
         if (_isPaused) Resume();
         else Pause();
     }
+    #endregion
 
+    #region State Management
     private void Pause()
     {
         _isPaused = true;
@@ -59,7 +67,7 @@ public class PauseUI : MonoBehaviour
             _pausePanel.SetActive(true);
         Debug.Log("<color=green><b>PauseUI:</b></color> Paused");
     }
-
+            
     private void Resume()
     {
         _isPaused = false;
@@ -75,9 +83,12 @@ public class PauseUI : MonoBehaviour
         GameSceneManager.Instance.LoadMenu();
         Debug.Log("<color=green><b>PauseUI:</b></color> Returning to Main Menu");
     }
+    #endregion
 
+    #region Cleanup
     private void OnDestroy()
     {
         Time.timeScale = 1f;
     }
+    #endregion
 }

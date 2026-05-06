@@ -1,26 +1,35 @@
 using UnityEngine;
 
-
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(EntityHealth))]
 public class EnemyAI : MonoBehaviour
 {
+    #region Inspector Settings
     [Header("<color=cyan><b><size=15>Stats</size></b></color>")]
     [SerializeField] protected float _moveSpeed = 3f;
     [SerializeField] protected float _detectionRange = 12f;
     [SerializeField] protected float _attackRange = 1.5f;
     [SerializeField] protected int _attackDamage = 10;
     [SerializeField] protected float _attackCooldown = 1f;
+    #endregion
 
+    #region Enums
+    protected enum EnemyState { Idle, Chase, Attack }
+    #endregion
+
+    #region State
     protected Transform _target;
     protected Rigidbody2D _rb;
     protected EntityHealth _targetHealth;
     protected float _nextAttackTime = 0f;
-
-    protected enum EnemyState { Idle, Chase, Attack }
     private EnemyState _currentState = EnemyState.Idle;
-    protected EnemyState CurrentState { get => _currentState; set => _currentState = value; }
+    #endregion
 
+    #region Properties
+    protected EnemyState CurrentState { get => _currentState; set => _currentState = value; }
+    #endregion
+
+    #region Lifecycle
     protected virtual void Awake()
     {
         gameObject.tag = "Enemy";
@@ -40,7 +49,9 @@ public class EnemyAI : MonoBehaviour
             UpdateManager.Instance.OnFixedUpdate += OnFixedUpdateTick;
         }
     }
+    #endregion
 
+    #region AI Logic
     protected virtual void OnUpdateTick()
     {
         if (_target == null)
@@ -55,11 +66,6 @@ public class EnemyAI : MonoBehaviour
 
         if (_currentState == EnemyState.Attack)
             Attack();
-    }
-
-    private void OnFixedUpdateTick()
-    {
-        Move();
     }
 
     private void FindTarget()
@@ -79,6 +85,13 @@ public class EnemyAI : MonoBehaviour
         else
             _currentState = EnemyState.Idle;
     }
+    #endregion
+
+    #region Movement
+    private void OnFixedUpdateTick()
+    {
+        Move();
+    }
 
     private void Move()
     {
@@ -96,18 +109,13 @@ public class EnemyAI : MonoBehaviour
             _rb.linearVelocity = Vector2.zero;
         }
     }
+    #endregion
 
+    #region Attacking
     protected virtual void Attack() { }
+    #endregion
 
-    protected virtual void OnDestroy()
-    {
-        if (UpdateManager.Instance != null)
-        {
-            UpdateManager.Instance.OnUpdate      -= OnUpdateTick;
-            UpdateManager.Instance.OnFixedUpdate -= OnFixedUpdateTick;
-        }
-    }
-
+    #region Debug
     protected virtual void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -116,4 +124,16 @@ public class EnemyAI : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, _attackRange);
     }
+    #endregion
+
+    #region Cleanup
+    protected virtual void OnDestroy()
+    {
+        if (UpdateManager.Instance != null)
+        {
+            UpdateManager.Instance.OnUpdate      -= OnUpdateTick;
+            UpdateManager.Instance.OnFixedUpdate -= OnFixedUpdateTick;
+        }
+    }
+    #endregion
 }

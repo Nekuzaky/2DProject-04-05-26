@@ -3,16 +3,19 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
-
+    #region Inspector Settings
     [Header("<color=cyan><b><size=15>Settings</size></b></color>")]
     [SerializeField] private int _damage = 10;
     [SerializeField] private float _lifetime = 5f;
     [SerializeField] private float _speed = 10f;
     [SerializeField] private string _targetTag = "Enemy";
+    #endregion
 
-
+    #region State
     private Rigidbody2D _rb;
+    #endregion
 
+    #region Lifecycle
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -22,7 +25,9 @@ public class Projectile : MonoBehaviour
     {
         Destroy(gameObject, _lifetime);
     }
+    #endregion
 
+    #region Public API
     public void SetDamage(int damage)
     {
         _damage = damage;
@@ -35,7 +40,9 @@ public class Projectile : MonoBehaviour
             _rb.linearVelocity = direction * _speed;
         }
     }
+    #endregion
 
+    #region Collision
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out Projectile _)) return;
@@ -46,4 +53,5 @@ public class Projectile : MonoBehaviour
 
         Destroy(gameObject);
     }
+    #endregion
 }

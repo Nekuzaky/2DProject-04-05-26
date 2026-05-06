@@ -3,10 +3,13 @@ using TMPro;
 
 public class AmmoUI : MonoBehaviour
 {
+    #region Inspector Settings
     [Header("<color=yellow><b><size=15>References</size></b></color>")]
     [SerializeField] private PlayerShooter _playerShooter;
     [SerializeField] private TMP_Text _ammoText;
+    #endregion
 
+    #region Lifecycle
     private void OnEnable()
     {
         if (_playerShooter != null)
@@ -22,7 +25,9 @@ public class AmmoUI : MonoBehaviour
             _playerShooter.OnAmmoChanged.RemoveListener(UpdateAmmoDisplay);
         }
     }
+    #endregion
 
+    #region UI Updates
     private void UpdateAmmoDisplay(int currentAmmo, int maxAmmo)
     {
         if (_ammoText != null)
@@ -30,4 +35,5 @@ public class AmmoUI : MonoBehaviour
             _ammoText.text = $"{currentAmmo}/{maxAmmo}";
         }
     }
+    #endregion
 }
