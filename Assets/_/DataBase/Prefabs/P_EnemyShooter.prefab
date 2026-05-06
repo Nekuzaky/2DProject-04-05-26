@@ -87,7 +87,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: a2d621c26d0552240b336e8a2e0eaad4, type: 3}
-  m_Color: {r: 0, g: 1, b: 0.16746092, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -159,6 +159,9 @@ MonoBehaviour:
   _maxHealth: 30
   _deathEffect: {fileID: 5079618571052215626, guid: 65c8fa6c3fa2aff44bc31f6bcd38eaee, type: 3}
   OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDamageTaken:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:

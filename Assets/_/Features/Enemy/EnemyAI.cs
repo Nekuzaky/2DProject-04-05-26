@@ -12,9 +12,6 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] protected int _attackDamage = 10;
     [SerializeField] protected float _attackCooldown = 1f;
 
-    [Header("Target")]
-    [SerializeField] private string _targetTag = "Player";
-
     protected Transform _target;
     protected Rigidbody2D _rb;
     protected EntityHealth _targetHealth;
@@ -67,13 +64,10 @@ public class EnemyAI : MonoBehaviour
 
     private void FindTarget()
     {
-        GameObject targetObject = GameObject.FindWithTag(_targetTag);
+        if (EnemyManager.Instance == null) return;
 
-        if (targetObject != null)
-        {
-            _target = targetObject.transform;
-            _targetHealth = targetObject.GetComponent<EntityHealth>();
-        }
+        _target       = EnemyManager.Instance.PlayerTarget;
+        _targetHealth = EnemyManager.Instance.PlayerHealth;
     }
 
     protected virtual void UpdateState(float distanceToTarget)

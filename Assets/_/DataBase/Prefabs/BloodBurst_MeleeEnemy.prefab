@@ -223,7 +223,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0, g: 0.11133521, b: 0.46226418, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4939,8 +4939,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfde346122730434bbfdf517067dece7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PopEffect
-  duration: 0.3
-  scaleCurve:
+  _duration: 0.3
+  _scaleCurve:
     serializedVersion: 2
     m_Curve: []
     m_PreInfinity: 2

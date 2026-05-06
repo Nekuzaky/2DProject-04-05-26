@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
             ApplyDifficulty();
         }
     }
-
+    #region Difficulty
     private void ApplyDifficulty() // this is where we calculate the new difficulty settings and apply them to the EnemyManager
     {
         if (EnemyManager.Instance == null) return;
@@ -97,7 +97,8 @@ public class GameManager : MonoBehaviour
         float rawMultiplier = _difficultyMultiplier.Evaluate(difficultyLevel);
         return Mathf.Clamp(rawMultiplier, _minDifficultyMultiplier, _maxDifficultyMultiplier);
     }
-
+    #endregion
+    #region Player Death 
     private void OnPlayerDied()
     {
         _gameOver = true;
@@ -113,4 +114,5 @@ public class GameManager : MonoBehaviour
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
+    #endregion
 }

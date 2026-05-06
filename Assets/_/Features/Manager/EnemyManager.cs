@@ -30,6 +30,12 @@ public class EnemyManager : MonoBehaviour
     private float _baseSpawnInterval;
     private float _spawnTimer;
     private bool _spawningEnabled = true;
+
+    [Header("<color=green><b><size=15>Target</size></b></color>")]
+    [SerializeField] private Transform _playerTargetOverride;
+
+    public Transform PlayerTarget { get; private set; }
+    public EntityHealth PlayerHealth { get; private set; }
     private Transform _playerTransform;
     private readonly Dictionary<GameObject, Queue<GameObject>> _enemyPools = new();
 
@@ -50,7 +56,22 @@ public class EnemyManager : MonoBehaviour
 
     private void Start()
     {
-        _playerTransform = FindAnyObjectByType<PlayerController>()?.transform;
+        if (_playerTargetOverride != null)
+        {
+            PlayerTarget     = _playerTargetOverride;
+            PlayerHealth     = _playerTargetOverride.GetComponent<EntityHealth>();
+            _playerTransform = PlayerTarget;
+        }
+        else
+        {
+            GameObject player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                PlayerTarget     = player.transform;
+                PlayerHealth     = player.GetComponent<EntityHealth>();
+                _playerTransform = PlayerTarget;
+            }
+        }
 
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
