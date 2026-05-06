@@ -1,44 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-
-    public static void LoadGameScene()
-    {
-        LoadSceneByName(SceneLoader.GameScene);
-    }
-
-    public static void LoadMainMenuScene()
-    {
-        LoadSceneByName(SceneLoader.MainMenuScene);
-    }
-
-    public static void LoadGameOverScene()
-    {
-        LoadSceneByName(SceneLoader.GameOverScene);
-    }
-
-    public static void QuitGame()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-    }
-
-    public static void LoadSceneByName(string sceneName)
-    {
-        if (string.IsNullOrWhiteSpace(sceneName))
-        {
-            Debug.LogError("GameManager: scene name is empty.");
-            return;
-        }
-
-        SceneManager.LoadScene(sceneName);
-    }
 
     [Header("<color=orange><b><size=15>Spawn Base Settings</size></b></color>")]
     [SerializeField] private int _baseMaxEnemiesPerSpawner = 10;
@@ -138,9 +102,12 @@ public class GameManager : MonoBehaviour
     private void OnPlayerDied()
     {
         _gameOver = true;
-        EnemyManager.Instance?.StopSpawning(); // stop spawning new enemies when the player dies
+        EnemyManager.Instance?.StopSpawning();
         Debug.Log($"<color=red><b>GameManager:</b></color> Game Over - Kills: {_killCount}, Difficulty: {_difficultyLevel}");
-        LoadGameOverScene();
+        
+        // Load game over scene
+        if (GameSceneManager.Instance != null)
+            GameSceneManager.Instance.LoadGameOver();
     }
 
     private void OnDestroy()

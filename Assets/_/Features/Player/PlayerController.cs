@@ -31,13 +31,21 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         Debug.Log("<color=green><b>PlayerController:</b></color> Ready");
+    }
 
-        if (UpdateManager.Instance != null)
-        {
-            UpdateManager.Instance.OnUpdate += OnUpdateTick;
-            UpdateManager.Instance.OnFixedUpdate += OnFixedUpdateTick;
-            UpdateManager.Instance.OnLateUpdate += OnLateUpdateTick;
-        }
+    private void Update()
+    {
+        OnUpdateTick();
+    }
+
+    private void FixedUpdate()
+    {
+        OnFixedUpdateTick();
+    }
+
+    private void LateUpdate()
+    {
+        OnLateUpdateTick();
     }
 
     private void OnUpdateTick()
@@ -66,15 +74,5 @@ public class PlayerController : MonoBehaviour
     {
         bool sprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.JoystickButton4);
         _moveSpeed = sprinting ? 5f * _runningMultiplier : 5f;
-    }
-
-    private void OnDestroy()
-    {
-        if (UpdateManager.Instance != null)
-        {
-            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
-            UpdateManager.Instance.OnFixedUpdate -= OnFixedUpdateTick;
-            UpdateManager.Instance.OnLateUpdate -= OnLateUpdateTick;
-        }
     }
 }
