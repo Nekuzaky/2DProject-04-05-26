@@ -39,7 +39,7 @@ public class EnemyAI : MonoBehaviour
         _rb.gravityScale = 0f;
     }
 
-    protected virtual void Start()
+    protected virtual void OnEnable()
     {
         FindTarget();
 
@@ -127,13 +127,18 @@ public class EnemyAI : MonoBehaviour
     #endregion
 
     #region Cleanup
-    protected virtual void OnDestroy()
+    protected virtual void OnDisable()
     {
         if (UpdateManager.Instance != null)
         {
             UpdateManager.Instance.OnUpdate      -= OnUpdateTick;
             UpdateManager.Instance.OnFixedUpdate -= OnFixedUpdateTick;
         }
+    }
+
+    protected virtual void OnDestroy()
+    {
+        OnDisable();
     }
     #endregion
 }

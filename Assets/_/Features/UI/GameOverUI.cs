@@ -60,10 +60,10 @@ public class GameOverUI : MonoBehaviour
         Debug.Log($"<color=green><b>GameOverUI:</b></color> Displaying final score - Kills: {kills}, Difficulty: {difficulty}, Time: {time:mm\\:ss}");
 
         _finalScoreText.text =
-            $"<color=yellow><b>Final Score : </b></color> " +
-            $"<color=red>Kills:</color> {kills} " +
-            $"<color=#ff8c00>Difficulty:</color> {difficulty} " +
-            $"<color=green>Time:</color> {time:mm\\:ss}";
+            $"<color=#ff2222><b>Final Score</b></color>\n"  +
+            $"<color=#cc0000>Kills</color> <color=#ffffff>{kills}</color>    " +
+            $"<color=#cc0000>Difficulty</color> <color=#ffffff>{difficulty}</color>    " +
+            $"<color=#cc0000>Time</color> <color=#ffffff>{time:mm\\:ss}</color>";
     }
     #endregion
 }

@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     private int _killCount;
     private int _difficultyLevel;
     private bool _gameOver;
+    private bool _pendingGameOver;
     private float _elapsedTime;
     #endregion
 
@@ -71,6 +72,12 @@ public class GameManager : MonoBehaviour
     {
         if (!_gameOver)
             _elapsedTime += Time.deltaTime;
+
+        if (_pendingGameOver)
+        {
+            _pendingGameOver = false;
+            GameSceneManager.Instance?.LoadGameOver();
+        }
     }
 
     private void OnKillCountChanged(int totalKills)
@@ -115,14 +122,11 @@ public class GameManager : MonoBehaviour
     #region Player Death 
     private void OnPlayerDied()
     {
-        _gameOver = true;
+        _gameOver        = true;
+        _pendingGameOver = true;
         EnemyManager.Instance?.StopSpawning();
         GameRunSummary.Save(_killCount, _difficultyLevel, Timer);
         Debug.Log($"<color=red><b>GameManager:</b></color> Game Over - Kills: {_killCount}, Difficulty: {_difficultyLevel}");
-        
-        // Load game over scene with cached run summary
-        if (GameSceneManager.Instance != null)
-            GameSceneManager.Instance.LoadGameOver();
     }
     #endregion
 

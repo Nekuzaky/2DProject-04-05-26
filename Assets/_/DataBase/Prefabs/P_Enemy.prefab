@@ -198,4 +198,3 @@ MonoBehaviour:
   _attackRange: 0.31
   _attackDamage: 10
   _attackCooldown: 1
-  _targetTag: Player
