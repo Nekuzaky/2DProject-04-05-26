@@ -470,7 +470,7 @@ GameObject:
   - component: {fileID: 384889421}
   - component: {fileID: 384889420}
   m_Layer: 0
-  m_Name: Hotbars
+  m_Name: ToolbarsUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3080,7 +3080,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   _baseMaxEnemiesPerSpawner: 10
-  _killsPerDifficultyStep: 10
+  _killsPerDifficultyStep: 18
   _enemyCountIncreasePerStep: 5
   _spawnIntervalDecreasePerStep: 0.3
   _minSpawnInterval: 0.5
