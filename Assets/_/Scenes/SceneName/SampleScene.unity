@@ -1244,6 +1244,7 @@ GameObject:
   - component: {fileID: 572839182}
   - component: {fileID: 572839183}
   - component: {fileID: 572839184}
+  - component: {fileID: 572839185}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1544,6 +1545,18 @@ MonoBehaviour:
   _pausePanel: {fileID: 754191362}
   _resumeButton: {fileID: 921332361}
   _menuButton: {fileID: 560076617}
+--- !u!114 &572839185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 572839169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63c3c8de2993e5b4b86d5ea746393d88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
 --- !u!1 &594678721
 GameObject:
   m_ObjectHideFlags: 0

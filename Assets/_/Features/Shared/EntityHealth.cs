@@ -20,12 +20,14 @@ public class EntityHealth : MonoBehaviour
 
     #region State
     private int _currentHealth;
+    private PlayerStats _playerStats;
     #endregion
 
     #region Lifecycle
     private void Awake()
     {
         _currentHealth = _maxHealth;
+        _playerStats = GetComponent<PlayerStats>();
     }
 
     private void OnEnable()
@@ -38,6 +40,8 @@ public class EntityHealth : MonoBehaviour
     #region Damage & Healing
     public void TakeDamage(int amount)
     {
+        if (_playerStats != null)
+            amount = Mathf.RoundToInt(amount * _playerStats.DamageMultiplier);
         _currentHealth = Mathf.Clamp(_currentHealth - amount, 0, _maxHealth);
         OnHealthChanged.Invoke(_currentHealth, _maxHealth);
         OnDamageTaken.Invoke();

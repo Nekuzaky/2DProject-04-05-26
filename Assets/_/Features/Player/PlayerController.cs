@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [DefaultExecutionOrder(-10)]
+[RequireComponent(typeof(PlayerStats))]
 public class PlayerController : MonoBehaviour
 {
     #region Inspector Settings - Movement
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 _moveInput;
     private Transform _cam;
     private Camera _mainCamera;
+    private PlayerStats _playerStats;
     #endregion
 
     #region Lifecycle
@@ -32,6 +34,7 @@ public class PlayerController : MonoBehaviour
         _rb.gravityScale = 0f;
         _cam = Camera.main?.transform;
         _mainCamera = Camera.main;
+        _playerStats = GetComponent<PlayerStats>();
     }
     private void Start()
     {
@@ -62,7 +65,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnFixedUpdateTick()
     {
-        _rb.linearVelocity = _moveInput * _moveSpeed;
+        float speed = _moveSpeed;
+        if (_playerStats != null)
+            speed *= _playerStats.MoveSpeedMultiplier;
+        _rb.linearVelocity = _moveInput * speed;
     }
     #endregion
 

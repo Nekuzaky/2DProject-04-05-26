@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4044964178750338139}
   - component: {fileID: 78233429773353299}
   - component: {fileID: -7259620053087561333}
+  - component: {fileID: -6400790894543375918}
   m_Layer: 0
   m_Name: P_Enemy
   m_TagString: Enemy
@@ -198,3 +199,19 @@ MonoBehaviour:
   _attackRange: 0.31
   _attackDamage: 10
   _attackCooldown: 1
+--- !u!114 &-6400790894543375918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638469823503880507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff57a35daf3f80341be32916798fa9e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyItemDrop
+  _drops:
+  - Prefab: {fileID: 309653640322715277, guid: 5c1d46f86fc7b494aa7b927ffa099c0d, type: 3}
+    DropChance: 20.5
+  _dropOffset: {x: 0, y: 0}

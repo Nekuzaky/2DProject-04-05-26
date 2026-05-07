@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2186849997547254862}
   - component: {fileID: 3142478202842836345}
   - component: {fileID: 8685485829144350093}
+  - component: {fileID: 2999870192621206968}
   m_Layer: 6
   m_Name: P_EnemyShooter
   m_TagString: Enemy
@@ -140,7 +141,6 @@ MonoBehaviour:
   _attackRange: 1.5
   _attackDamage: 10
   _attackCooldown: 2.68
-  _targetTag: Player
   _projectilePrefab: {fileID: 811075159747028399, guid: d2ef2ad63d05ad744bce2c13f8022354, type: 3}
   _firePoint: {fileID: 5662802576330120574}
   _shootRange: 6
@@ -213,6 +213,22 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.64, y: 0.64}
   m_EdgeRadius: 0
+--- !u!114 &2999870192621206968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8476703885085695931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff57a35daf3f80341be32916798fa9e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyItemDrop
+  _drops:
+  - Prefab: {fileID: 309653640322715277, guid: 5c1d46f86fc7b494aa7b927ffa099c0d, type: 3}
+    DropChance: 39.6
+  _dropOffset: {x: 0, y: 0}
 --- !u!1 &8526444384099054910
 GameObject:
   m_ObjectHideFlags: 0

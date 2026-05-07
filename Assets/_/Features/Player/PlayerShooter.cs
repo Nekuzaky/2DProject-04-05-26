@@ -17,6 +17,7 @@ public class PlayerShooter : MonoBehaviour
     private bool _isReloading = false;
     private float _reloadStartTime;
     private float _reloadDuration;
+    private PlayerStats _playerStats;
     #endregion
 
     #region Events & Properties
@@ -33,6 +34,7 @@ public class PlayerShooter : MonoBehaviour
         _maxAmmo = _weaponStats != null ? _weaponStats.FinalAmmoCapacity : _currentAmmo;
         _currentAmmo = _maxAmmo;
         OnAmmoChanged?.Invoke(_currentAmmo, _maxAmmo);
+        _playerStats = GetComponent<PlayerStats>();
 
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
@@ -50,6 +52,8 @@ public class PlayerShooter : MonoBehaviour
             return;
 
         float fireRate = _weaponStats != null ? _weaponStats.FinalFireRate : 0.2f;
+        if (_playerStats != null)
+            fireRate *= _playerStats.FireRateMultiplier;
         bool fire = Input.GetMouseButton(0) || Input.GetAxisRaw("RightTrigger") > 0.1f;
         if (fire && Time.time > _nextFireTime)
         {
