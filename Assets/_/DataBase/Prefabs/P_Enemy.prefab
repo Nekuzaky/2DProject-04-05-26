@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f074a14197fd434799886b9fb00cb74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityHealth
-  _maxHealth: 50
+  _maxHealth: 42
   _deathEffect: {fileID: 5079618571052215626, guid: 37b5a8179dfff864ca159d4608c2f6f4, type: 3}
   OnHealthChanged:
     m_PersistentCalls:
