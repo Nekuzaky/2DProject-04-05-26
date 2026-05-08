@@ -17,10 +17,16 @@ public class PauseUI : MonoBehaviour
     private bool _isPaused;
     #endregion
 
+    #region Constants
+    private const KeyCode PauseGamepadButton = KeyCode.JoystickButton7;
+    #endregion
+
     #region Initialization
     private void Awake()
     {
         EnsureEventSystemInputModule();
+        ConfigureNavigation(_resumeButton);
+        ConfigureNavigation(_menuButton);
 
         if (_resumeButton != null)
             _resumeButton.onClick.AddListener(Resume);
@@ -38,17 +44,43 @@ public class PauseUI : MonoBehaviour
     {
         EventSystem eventSystem = FindFirstObjectByType<EventSystem>();
         if (eventSystem == null)
-            return;
+        {
+            GameObject eventSystemObject = new GameObject("EventSystem");
+            eventSystem = eventSystemObject.AddComponent<EventSystem>();
+            eventSystemObject.AddComponent<StandaloneInputModule>();
+        }
 
         BaseInputModule inputModule = eventSystem.GetComponent<BaseInputModule>();
         if (inputModule == null)
             eventSystem.gameObject.AddComponent<StandaloneInputModule>();
     }
 
+    private static void ConfigureNavigation(Selectable selectable)
+    {
+        if (selectable == null)
+            return;
+
+        Navigation navigation = selectable.navigation;
+        navigation.mode = Navigation.Mode.Automatic;
+        selectable.navigation = navigation;
+    }
+
+    private static void SelectButton(Button button)
+    {
+        if (button == null || EventSystem.current == null)
+            return;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(button.gameObject);
+    }
+
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(PauseGamepadButton))
             TogglePause();
+
+        if (_isPaused && EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null)
+            SelectButton(_resumeButton != null ? _resumeButton : _menuButton);
     }
 
     private void TogglePause()
@@ -65,6 +97,7 @@ public class PauseUI : MonoBehaviour
         Time.timeScale = 0f;
         if (_pausePanel != null)
             _pausePanel.SetActive(true);
+        SelectButton(_resumeButton != null ? _resumeButton : _menuButton);
         Debug.Log("<color=green><b>PauseUI:</b></color> Paused");
     }
             
@@ -72,6 +105,8 @@ public class PauseUI : MonoBehaviour
     {
         _isPaused = false;
         Time.timeScale = 1f;
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
         if (_pausePanel != null)
             _pausePanel.SetActive(false);
         Debug.Log("<color=green><b>PauseUI:</b></color> Resumed");

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class GameOverUI : MonoBehaviour
 {
@@ -14,6 +15,9 @@ public class GameOverUI : MonoBehaviour
     private void Awake()
     {
         Time.timeScale = 1f;
+        EnsureEventSystemInputModule();
+        ConfigureNavigation(_restartButton);
+        ConfigureNavigation(_menuButton);
 
         if (_restartButton != null)
             _restartButton.onClick.AddListener(() => GameSceneManager.Instance.PlayGame()); // Restart the game by loading the game scene
@@ -26,11 +30,19 @@ public class GameOverUI : MonoBehaviour
         else
             Debug.LogWarning("GameOverUI: Final score text is not assigned.");
     }
+
+    private void Update()
+    {
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject == null)
+            SelectButton(_restartButton != null ? _restartButton : _menuButton);
+    }
     #endregion
 
     #region Score Display
     private void Start()
     {
+        SelectButton(_restartButton != null ? _restartButton : _menuButton);
+
         if (_finalScoreText == null)
             return;
 
@@ -64,6 +76,40 @@ public class GameOverUI : MonoBehaviour
             $"<color=#cc0000>Kills</color> <color=#ffffff>{kills}</color>    " +
             $"<color=#cc0000>Difficulty</color> <color=#ffffff>{difficulty}</color>    " +
             $"<color=#cc0000>Time</color> <color=#ffffff>{time:mm\\:ss}</color>";
+    }
+
+    private void EnsureEventSystemInputModule()
+    {
+        EventSystem eventSystem = FindFirstObjectByType<EventSystem>();
+        if (eventSystem == null)
+        {
+            GameObject eventSystemObject = new GameObject("EventSystem");
+            eventSystem = eventSystemObject.AddComponent<EventSystem>();
+            eventSystemObject.AddComponent<StandaloneInputModule>();
+        }
+
+        BaseInputModule inputModule = eventSystem.GetComponent<BaseInputModule>();
+        if (inputModule == null)
+            eventSystem.gameObject.AddComponent<StandaloneInputModule>();
+    }
+
+    private static void ConfigureNavigation(Selectable selectable)
+    {
+        if (selectable == null)
+            return;
+
+        Navigation navigation = selectable.navigation;
+        navigation.mode = Navigation.Mode.Automatic;
+        selectable.navigation = navigation;
+    }
+
+    private static void SelectButton(Button button)
+    {
+        if (button == null || EventSystem.current == null)
+            return;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(button.gameObject);
     }
     #endregion
 }

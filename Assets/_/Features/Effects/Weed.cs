@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PickupItem))]
+[RequireComponent(typeof(PickupItemDrugs))]
 public class Weed : MonoBehaviour
 {
     #region Inspector Settings
@@ -14,10 +14,12 @@ public class Weed : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        if (WeedEffect.Instance != null)
-            WeedEffect.Instance.Trigger(_visualDuration);
+        WeedEffect effect = WeedEffect.Instance != null ? WeedEffect.Instance : FindFirstObjectByType<WeedEffect>();
+
+        if (effect != null)
+            effect.Trigger(_visualDuration);
         else
-            Debug.LogWarning("<color=yellow><b>Weed:</b></color> WeedEffect not found — add the component to the Main Camera.");
+            Debug.LogWarning("<color=yellow><b>Weed:</b></color> WeedEffect not found — add the component to your player camera.");
     }
     #endregion
 }

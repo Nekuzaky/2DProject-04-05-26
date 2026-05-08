@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -3682790075405393052}
   - component: {fileID: 2189882160625709589}
   - component: {fileID: -8102120751874978164}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Weed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PickupItem
   _effects:
   - Target: 0
-    Value: 15
+    Value: 23.2
     Delay: 0
     Duration: 0
   - Target: 1
@@ -181,4 +181,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da094821c84f8604c8e376d8dbc893ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weed
-  _visualDuration: 11.4
+  _visualDuration: 2

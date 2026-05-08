@@ -1,10 +1,12 @@
 {
-    "name": "e",
+    "name": "FeatureName.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:f63faa82e1cb9c94c8b1796966494173"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

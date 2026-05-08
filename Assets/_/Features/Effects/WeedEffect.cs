@@ -51,6 +51,7 @@ public class WeedEffect : MonoBehaviour
 
     private Camera _mainCamera;
     private float  _baseOrthoSize;
+    private bool   _usingUpdateManager;
     #endregion
 
     #region Lifecycle
@@ -60,6 +61,11 @@ public class WeedEffect : MonoBehaviour
         Instance = this;
 
         _mainCamera = Camera.main;
+        if (_mainCamera == null)
+            _mainCamera = GetComponent<Camera>();
+
+        EnsurePostProcessingEnabled();
+
         if (_mainCamera != null)
             _baseOrthoSize = _mainCamera.orthographicSize;
 
@@ -69,13 +75,28 @@ public class WeedEffect : MonoBehaviour
     private void OnEnable()
     {
         if (UpdateManager.Instance != null)
+        {
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
+            _usingUpdateManager = true;
+        }
+        else
+        {
+            _usingUpdateManager = false;
+        }
     }
 
     private void OnDisable()
     {
-        if (UpdateManager.Instance != null)
+        if (_usingUpdateManager && UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
+
+        _usingUpdateManager = false;
+    }
+
+    private void Update()
+    {
+        if (!_usingUpdateManager)
+            OnUpdateTick();
     }
 
     private void OnDestroy()
@@ -107,6 +128,15 @@ public class WeedEffect : MonoBehaviour
         _vignette.intensity.Override(0f);
 
         _effectVolume.profile = profile;
+    }
+
+    private void EnsurePostProcessingEnabled()
+    {
+        if (_mainCamera == null)
+            return;
+
+        if (_mainCamera.TryGetComponent(out UniversalAdditionalCameraData cameraData))
+            cameraData.renderPostProcessing = true;
     }
     #endregion
 

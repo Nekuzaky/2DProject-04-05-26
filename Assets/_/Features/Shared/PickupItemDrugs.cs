@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class PickupItem : MonoBehaviour
+public class PickupItemDrugs : MonoBehaviour
 {
     #region Nested Types
     public enum EffectTarget { Heal, MoveSpeed, FireRate, DamageReduction }

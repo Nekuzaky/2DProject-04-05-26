@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemyAI
   _moveSpeed: 4.42
-  _detectionRange: 500
+  _detectionRange: 5000
   _attackRange: 0.31
   _attackDamage: 10
   _attackCooldown: 1
@@ -214,4 +214,6 @@ MonoBehaviour:
   _drops:
   - Prefab: {fileID: 309653640322715277, guid: 5c1d46f86fc7b494aa7b927ffa099c0d, type: 3}
     DropChance: 20.5
+  - Prefab: {fileID: 8120913742235031590, guid: b95ed6f415461bc4c9b4f84858622f23, type: 3}
+    DropChance: 5.6
   _dropOffset: {x: 0, y: 0}

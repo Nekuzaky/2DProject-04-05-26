@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class ReloadTimeUI : MonoBehaviour
 {
@@ -7,8 +7,7 @@ public class ReloadTimeUI : MonoBehaviour
     [Header("<color=cyan><b><size=15>References</size></b></color>")]
     [SerializeField] private PlayerShooter _playerShooter;
     [SerializeField] private GameObject _ammoPanel;
-    [SerializeField] private GameObject _reloadPanel;
-    [SerializeField] private Image _reloadFillImage;
+    [SerializeField] private TMP_Text _reloadText;
     #endregion
 
     #region State
@@ -29,14 +28,11 @@ public class ReloadTimeUI : MonoBehaviour
             return;
         }
 
-        if (_reloadPanel == gameObject)
-            Debug.LogWarning("<color=yellow><b>ReloadTimeUI:</b></color> Put this script on an always-active HUD object, not on the Reload UI object itself.");
-
         _playerShooter.OnReloadStart    += HandleReloadStart;
         _playerShooter.OnReloadFinished += HandleReloadFinished;
 
-        if (_reloadPanel != null) _reloadPanel.SetActive(false);
         if (_ammoPanel   != null) _ammoPanel.SetActive(true);
+        if (_reloadText != null) _reloadText.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -58,11 +54,8 @@ public class ReloadTimeUI : MonoBehaviour
         if (_ammoPanel == null)
             _ammoPanel = GameObject.Find("AmmoUI");
 
-        if (_reloadPanel == null)
-            _reloadPanel = GameObject.Find("ReloadTimeUI");
-
-        if (_reloadFillImage == null && _reloadPanel != null)
-            _reloadFillImage = _reloadPanel.GetComponentInChildren<Image>(true);
+        if (_reloadText == null)
+            _reloadText = GameObject.Find("ReloadTimeUI")?.GetComponent<TMP_Text>();
     }
     #endregion
 
@@ -72,8 +65,8 @@ public class ReloadTimeUI : MonoBehaviour
         _isReloading = true;
 
         if (_ammoPanel   != null) _ammoPanel.SetActive(false);
-        if (_reloadPanel != null) _reloadPanel.SetActive(true);
-        if (_reloadFillImage != null) _reloadFillImage.fillAmount = 0f;
+        if (_reloadText != null) _reloadText.gameObject.SetActive(true);
+        if (_reloadText != null) _reloadText.text = "Reload... 0%";
 
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
@@ -83,9 +76,8 @@ public class ReloadTimeUI : MonoBehaviour
     {
         _isReloading = false;
 
-        if (_reloadPanel != null) _reloadPanel.SetActive(false);
         if (_ammoPanel   != null) _ammoPanel.SetActive(true);
-        if (_reloadFillImage != null) _reloadFillImage.fillAmount = 1f;
+        if (_reloadText != null) _reloadText.gameObject.SetActive(false);
 
         if (UpdateManager.Instance != null)
             UpdateManager.Instance.OnUpdate -= OnUpdateTick;
@@ -93,8 +85,10 @@ public class ReloadTimeUI : MonoBehaviour
 
     private void OnUpdateTick()
     {
-        if (!_isReloading || _playerShooter == null || _reloadFillImage == null) return;
-        _reloadFillImage.fillAmount = _playerShooter.ReloadProgress;
+        if (!_isReloading || _playerShooter == null || _reloadText == null) return;
+
+        int progressPercent = Mathf.RoundToInt(_playerShooter.ReloadProgress * 100f);
+        _reloadText.text = $"Reload.. {progressPercent}%";
     }
     #endregion
 }

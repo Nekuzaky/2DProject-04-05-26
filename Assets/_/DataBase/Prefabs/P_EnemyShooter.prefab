@@ -139,7 +139,7 @@ MonoBehaviour:
   _moveSpeed: 3
   _detectionRange: 5000
   _attackRange: 1.5
-  _attackDamage: 10
+  _attackDamage: 9
   _attackCooldown: 2.68
   _projectilePrefab: {fileID: 811075159747028399, guid: d2ef2ad63d05ad744bce2c13f8022354, type: 3}
   _firePoint: {fileID: 5662802576330120574}
@@ -228,6 +228,8 @@ MonoBehaviour:
   _drops:
   - Prefab: {fileID: 309653640322715277, guid: 5c1d46f86fc7b494aa7b927ffa099c0d, type: 3}
     DropChance: 39.6
+  - Prefab: {fileID: 8120913742235031590, guid: b95ed6f415461bc4c9b4f84858622f23, type: 3}
+    DropChance: 4.9
   _dropOffset: {x: 0, y: 0}
 --- !u!1 &8526444384099054910
 GameObject:

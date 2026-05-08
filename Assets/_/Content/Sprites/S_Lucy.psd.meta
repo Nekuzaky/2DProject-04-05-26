@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 251f48aa20a5dff4eb3174ced48b038f
+guid: 544a68265be5ff64987c46421d925089
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2080067877218090588
-    second: ReloadUI_0
+      213: 1213451483030813245
+    second: S_Lucy_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,9 +40,9 @@ TextureImporter:
     filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 0
-    wrapV: 0
-    wrapW: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ReloadUI_0
+      name: S_Lucy_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 64
-        height: 64
+        x: 19
+        y: 10
+        width: 27
+        height: 45
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c5ef842b6b2eddc10800000000000000
-      internalID: 2080067877218090588
+      spriteID: d3af836d1bb07d010800000000000000
+      internalID: 1213451483030813245
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ReloadUI_0: 2080067877218090588
+      S_Lucy_0: 1213451483030813245
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
