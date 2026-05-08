@@ -49,7 +49,7 @@ public class EnemyManager : MonoBehaviour
     private float _spawnTimer;
     private bool _spawningEnabled = true;
     private Transform _playerTransform;
-    private readonly Dictionary<GameObject, Queue<GameObject>> _enemyPools = new();
+    private readonly Dictionary<GameObject, Queue<GameObject>> _enemyPoolDict = new();
     #endregion
 
     #region Lifecycle
@@ -145,10 +145,10 @@ public class EnemyManager : MonoBehaviour
             return;
         }
 
-        if (!_enemyPools.ContainsKey(sourcePrefab))
-            _enemyPools[sourcePrefab] = new Queue<GameObject>();
+        if (!_enemyPoolDict.ContainsKey(sourcePrefab))
+            _enemyPoolDict[sourcePrefab] = new Queue<GameObject>();
 
-        _enemyPools[sourcePrefab].Enqueue(enemy);
+        _enemyPoolDict[sourcePrefab].Enqueue(enemy);
     }
 
     private void AddKill()
@@ -160,10 +160,10 @@ public class EnemyManager : MonoBehaviour
     private void InitializePool(GameObject prefab)
     {
         if (prefab == null) return;
-        if (_enemyPools.ContainsKey(prefab)) return;
+        if (_enemyPoolDict.ContainsKey(prefab)) return;
 
         Queue<GameObject> pool = new Queue<GameObject>();
-        _enemyPools[prefab] = pool;
+        _enemyPoolDict[prefab] = pool;
 
         for (int i = 0; i < _poolWarmupPerPrefab; i++)
         {
@@ -175,10 +175,10 @@ public class EnemyManager : MonoBehaviour
 
     private GameObject GetEnemyFromPool(GameObject prefab)
     {
-        if (!_enemyPools.ContainsKey(prefab))
+        if (!_enemyPoolDict.ContainsKey(prefab))
             InitializePool(prefab);
 
-        Queue<GameObject> pool = _enemyPools[prefab];
+        Queue<GameObject> pool = _enemyPoolDict[prefab];
         return pool.Count > 0 ? pool.Dequeue() : CreateEnemyInstance(prefab);
     }
 

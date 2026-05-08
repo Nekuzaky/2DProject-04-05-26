@@ -21,7 +21,7 @@ public class PlayerStats : MonoBehaviour
     #endregion
 
     #region State
-    private readonly List<ActiveEffect> _effects = new();
+    private readonly List<ActiveEffect> _effectList = new();
     #endregion
 
     #region Properties
@@ -47,14 +47,14 @@ public class PlayerStats : MonoBehaviour
     #region Tick
     private void OnUpdateTick()
     {
-        _effects.RemoveAll(e => e.IsExpired);
+        _effectList.RemoveAll(e => e.IsExpired);
     }
     #endregion
 
     #region Public API
     public void AddEffect(EffectType type, float multiplier, float delay, float duration)
     {
-        _effects.Add(new ActiveEffect
+        _effectList.Add(new ActiveEffect
         {
             Type       = type,
             Multiplier = multiplier,
@@ -69,7 +69,7 @@ public class PlayerStats : MonoBehaviour
     private float GetCombinedMultiplier(EffectType type)
     {
         float result = 1f;
-        foreach (ActiveEffect e in _effects)
+        foreach (ActiveEffect e in _effectList)
             if (e.Type == type && e.IsActive)
                 result *= e.Multiplier;
         return result;
