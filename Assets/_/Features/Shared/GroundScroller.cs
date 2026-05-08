@@ -1,22 +1,18 @@
 using UnityEngine;
 
-/// <summary>
-/// Place ce script sur le GameObject "Ground" (SpriteRenderer Draw Mode = Tiled).
-///
-/// - Suit la caméra → couvre toujours tout l'écran (monde infini)
-/// - Scrolle les UV de la texture en fonction de la position monde
-///   → le joueur voit le sol défiler sous lui (sensation de déplacement)
-/// </summary>
+// Attach to the "Ground" GameObject that already has a SpriteRenderer (Draw Mode = Tiled).
+// Follows the camera to maintain infinite coverage and scrolls the texture UV
+// based on world position so the ground appears to move under the player.
 [RequireComponent(typeof(SpriteRenderer))]
 public class GroundScroller : MonoBehaviour
 {
     #region Inspector Settings
     [Header("<color=cyan><b><size=15>Coverage</size></b></color>")]
-    [Tooltip("Multiplicateur de couverture écran. 1.5 = sécurisé contre les bords.")]
+    [Tooltip("Screen coverage multiplier. 1 = exact screen size, 1.5 = safe margin.")]
     [SerializeField] private float _coverageMultiplier = 1.5f;
 
     [Header("<color=yellow><b><size=15>Scroll</size></b></color>")]
-    [Tooltip("Taille d'une tuile en unités monde. Ajuste selon la taille de ta texture.")]
+    [Tooltip("World units per texture tile. Adjust to match your texture size.")]
     [SerializeField] private float _tileSize = 3f;
     #endregion
 
@@ -33,9 +29,7 @@ public class GroundScroller : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _mainCamera     = Camera.main;
         _cam            = _mainCamera?.transform;
-
-        // Crée une instance du material pour ne pas modifier le shared material
-        _instanceMat = _spriteRenderer.material;
+        _instanceMat    = _spriteRenderer.material; // creates a material instance
     }
 
     private void LateUpdate()
@@ -68,7 +62,7 @@ public class GroundScroller : MonoBehaviour
         float height = _mainCamera.orthographicSize * 2f * _coverageMultiplier;
         float width  = height * _mainCamera.aspect;
 
-        // SpriteRenderer Tiled : Size pour tiler proprement, pas localScale
+        // Use Size (not localScale) to tile correctly with Draw Mode = Tiled
         _spriteRenderer.size = new Vector2(width, height);
     }
 
@@ -78,8 +72,7 @@ public class GroundScroller : MonoBehaviour
 
         Vector3 pos = _cam.position;
 
-        // Décale les UV en fonction de la position monde
-        // → la texture défile sous le joueur comme si le sol était ancré dans le monde
+        // Offset UVs based on world position so the texture scrolls with the player
         _instanceMat.mainTextureOffset = new Vector2(
             pos.x / _tileSize,
             pos.y / _tileSize
