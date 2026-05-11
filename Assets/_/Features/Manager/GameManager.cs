@@ -21,12 +21,25 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _maxDifficultyMultiplier = 5f;
     #endregion
 
+    #region Trophy IDs (GameJolt Dashboard → API → Trophies)
+    private const int TrophyBronze   = 299407; // Rat Slayer      – Kill 10 enemies
+    private const int TrophySilver   = 299408; // Exterminator    – Kill 50 enemies
+    private const int TrophyGold     = 299409; // Nightmare Fuel  – Reach difficulty level 5
+    private const int TrophyPlatinum = 299410; // Pure Nightmare  – Kill 100 enemies
+    #endregion
+
     #region State
     private int _killCount;
     private int _difficultyLevel;
     private bool _gameOver;
     private bool _pendingGameOver;
     private float _elapsedTime;
+
+    // Trophy unlock guards — each trophy is submitted at most once per run
+    private bool _trophyBronzeUnlocked;
+    private bool _trophySilverUnlocked;
+    private bool _trophyGoldUnlocked;
+    private bool _trophyPlatinumUnlocked;
     #endregion
 
     #region Properties
@@ -41,7 +54,7 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -90,6 +103,38 @@ public class GameManager : MonoBehaviour
             _difficultyLevel = newDifficulty;
             ApplyDifficulty();
         }
+
+        CheckTrophies();
+    }
+
+    private void CheckTrophies()
+    {
+        if (GameJoltManager.Instance == null || !GameJoltManager.Instance.IsAuthenticated) return;
+
+        if (!_trophyBronzeUnlocked && _killCount >= 10)
+        {
+            _trophyBronzeUnlocked = true;
+            GameJoltManager.Instance.UnlockTrophy(TrophyBronze);
+            GameLogger.Log("<color=orange><b>GameManager:</b></color> Trophy unlocked — Rat Slayer (Bronze)");
+        }
+        if (!_trophySilverUnlocked && _killCount >= 50)
+        {
+            _trophySilverUnlocked = true;
+            GameJoltManager.Instance.UnlockTrophy(TrophySilver);
+            GameLogger.Log("<color=orange><b>GameManager:</b></color> Trophy unlocked — Exterminator (Silver)");
+        }
+        if (!_trophyGoldUnlocked && _difficultyLevel >= 5)
+        {
+            _trophyGoldUnlocked = true;
+            GameJoltManager.Instance.UnlockTrophy(TrophyGold);
+            GameLogger.Log("<color=orange><b>GameManager:</b></color> Trophy unlocked — Nightmare Fuel (Gold)");
+        }
+        if (!_trophyPlatinumUnlocked && _killCount >= 100)
+        {
+            _trophyPlatinumUnlocked = true;
+            GameJoltManager.Instance.UnlockTrophy(TrophyPlatinum);
+            GameLogger.Log("<color=orange><b>GameManager:</b></color> Trophy unlocked — Pure Nightmare (Platinum)");
+        }
     }
     #endregion
 
@@ -107,7 +152,7 @@ public class GameManager : MonoBehaviour
 
         EnemyManager.Instance.SetDifficulty(newMaxEnemies, newSpawnInterval);
 
-        Debug.Log($"<color=orange><b>GameManager:</b></color> Difficulty level {_difficultyLevel} - Multiplier: {difficultyMultiplier:F2} - MaxEnemies: {newMaxEnemies}, SpawnInterval: {newSpawnInterval:F2}s");
+        GameLogger.Log($"<color=orange><b>GameManager:</b></color> Difficulty level {_difficultyLevel} - Multiplier: {difficultyMultiplier:F2} - MaxEnemies: {newMaxEnemies}, SpawnInterval: {newSpawnInterval:F2}s");
     }
 
     private float GetDifficultyMultiplier(int difficultyLevel)
@@ -126,7 +171,17 @@ public class GameManager : MonoBehaviour
         _pendingGameOver = true;
         EnemyManager.Instance?.StopSpawning();
         GameRunSummary.Save(_killCount, _difficultyLevel, Timer);
-        Debug.Log($"<color=red><b>GameManager:</b></color> Game Over - Kills: {_killCount}, Difficulty: {_difficultyLevel}");
+        GameLogger.Log($"<color=red><b>GameManager:</b></color> Game Over - Kills: {_killCount}, Difficulty: {_difficultyLevel}");
+
+        SubmitGameJoltScore();
+    }
+
+    private void SubmitGameJoltScore()
+    {
+        if (GameJoltManager.Instance == null || !GameJoltManager.Instance.IsAuthenticated) return;
+
+        string scoreText = $"{_killCount} kills (lvl {_difficultyLevel})";
+        GameJoltManager.Instance.SubmitScore(_killCount, scoreText);
     }
     #endregion
 

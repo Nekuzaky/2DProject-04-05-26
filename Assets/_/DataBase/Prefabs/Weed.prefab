@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -3682790075405393052}
   - component: {fileID: 2189882160625709589}
   - component: {fileID: -8102120751874978164}
+  - component: {fileID: 9071044343307310860}
   m_Layer: 8
   m_Name: Weed
   m_TagString: Untagged
@@ -182,3 +183,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Weed
   _visualDuration: 2
+--- !u!114 &9071044343307310860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309653640322715277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd06d0a27d43c124bb98335042e16c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemLight
+  _lightColor: {r: 0.3, g: 1, b: 0.3, a: 1}
+  _intensity: 1.74
+  _outerRadius: 1.2
+  _innerRadius: 0.1
+  _falloff: 0.9
+  _pulseSpeed: 0.8
+  _pulseStrength: 0.3

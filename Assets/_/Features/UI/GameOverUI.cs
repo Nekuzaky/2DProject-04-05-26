@@ -28,7 +28,7 @@ public class GameOverUI : MonoBehaviour
         if (_finalScoreText != null)
             _finalScoreText.raycastTarget = false;
         else
-            Debug.LogWarning("GameOverUI: Final score text is not assigned.");
+            GameLogger.LogWarning("GameOverUI: Final score text is not assigned.");
     }
 
     private void Update()
@@ -69,7 +69,7 @@ public class GameOverUI : MonoBehaviour
             time = System.TimeSpan.Zero;
         }
 
-        Debug.Log($"<color=green><b>GameOverUI:</b></color> Displaying final score - Kills: {kills}, Difficulty: {difficulty}, Time: {time:mm\\:ss}");
+        GameLogger.Log($"<color=green><b>GameOverUI:</b></color> Displaying final score - Kills: {kills}, Difficulty: {difficulty}, Time: {time:mm\\:ss}");
 
         _finalScoreText.text =
             $"<color=#ff2222><b>Final Score</b></color>\n"  +

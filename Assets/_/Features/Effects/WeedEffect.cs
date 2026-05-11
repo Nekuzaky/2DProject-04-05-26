@@ -146,7 +146,7 @@ public class WeedEffect : MonoBehaviour
         _elapsed  = 0f;
         _duration = Mathf.Max(0.1f, duration);
         _isActive = true;
-        Debug.Log($"<color=lime><b>WeedEffect:</b></color> Effect triggered for {duration}s.");
+        GameLogger.Log($"<color=lime><b>WeedEffect:</b></color> Effect triggered for {duration}s.");
     }
 
     public bool  IsActive       => _isActive;
@@ -223,7 +223,7 @@ public class WeedEffect : MonoBehaviour
         if (_mainCamera != null)
             _mainCamera.orthographicSize = _baseOrthoSize;
 
-        Debug.Log("<color=grey><b>WeedEffect:</b></color> Effect expired.");
+        GameLogger.Log("<color=grey><b>WeedEffect:</b></color> Effect expired.");
     }
     #endregion
 }

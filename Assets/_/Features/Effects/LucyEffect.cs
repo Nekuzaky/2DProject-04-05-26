@@ -176,7 +176,7 @@ public class LucyEffect : MonoBehaviour
         if (playerTransform != null)
             CreateHalo(playerTransform);
 
-        Debug.Log($"<color=magenta><b>LucyEffect:</b></color> Effect triggered for {duration}s.");
+        GameLogger.Log($"<color=magenta><b>LucyEffect:</b></color> Effect triggered for {duration}s.");
     }
 
     public bool  IsActive       => _isActive;
@@ -246,7 +246,7 @@ public class LucyEffect : MonoBehaviour
 
         DestroyHalo();
 
-        Debug.Log("<color=grey><b>LucyEffect:</b></color> Effect expired.");
+        GameLogger.Log("<color=grey><b>LucyEffect:</b></color> Effect expired.");
     }
     #endregion
 }

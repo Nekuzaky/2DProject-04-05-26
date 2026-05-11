@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 323474464220965971}
   - component: {fileID: 2521075164217137603}
   - component: {fileID: 4763221969668054849}
+  - component: {fileID: -247323241989307208}
   m_Layer: 8
   m_Name: Lucy
   m_TagString: Untagged
@@ -160,3 +161,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Lucy
   _visualDuration: 2.99
+--- !u!114 &-247323241989307208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8120913742235031590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd06d0a27d43c124bb98335042e16c45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemLight
+  _lightColor: {r: 0.63132143, g: 0, b: 1, a: 1}
+  _intensity: 1.22
+  _outerRadius: 1.2
+  _innerRadius: 0.1
+  _falloff: 0.9
+  _pulseSpeed: 0.8
+  _pulseStrength: 0.3

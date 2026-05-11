@@ -19,7 +19,7 @@ public class MainMenuUI : MonoBehaviour
         if (_playButton != null)
         {
             _playButton.onClick.AddListener(() => GameSceneManager.Instance.PlayGame());
-            Debug.Log("<color=green><b>MainMenuUI:</b></color> Play Button Initialized");
+            GameLogger.Log("<color=green><b>MainMenuUI:</b></color> Play Button Initialized");
         }
 
         if (_quitButton != null)

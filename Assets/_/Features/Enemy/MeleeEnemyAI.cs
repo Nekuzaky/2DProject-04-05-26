@@ -12,7 +12,7 @@ public class MeleeEnemyAI : EnemyAI
         if (_targetHealth != null)
         {
             _targetHealth.TakeDamage(_attackDamage);
-            Debug.Log("<color=red><b>MeleeEnemyAI:</b></color> Attacked " + _target.name + " for " + _attackDamage + " damage.");
+            GameLogger.Log("<color=red><b>MeleeEnemyAI:</b></color> Attacked " + _target.name + " for " + _attackDamage + " damage.");
         }
     }
     #endregion

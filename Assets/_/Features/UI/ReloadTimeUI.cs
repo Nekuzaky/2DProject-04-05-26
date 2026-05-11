@@ -24,7 +24,7 @@ public class ReloadTimeUI : MonoBehaviour
 
         if (_playerShooter == null)
         {
-            Debug.LogError("<color=red><b>ReloadTimeUI:</b></color> PlayerShooter not found!");
+            GameLogger.LogError("<color=red><b>ReloadTimeUI:</b></color> PlayerShooter not found!");
             return;
         }
 

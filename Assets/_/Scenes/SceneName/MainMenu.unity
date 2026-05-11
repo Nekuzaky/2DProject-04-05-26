@@ -704,6 +704,7 @@ GameObject:
   m_Component:
   - component: {fileID: 926596565}
   - component: {fileID: 926596566}
+  - component: {fileID: 926596567}
   m_Layer: 0
   m_Name: ==MANAGERS==
   m_TagString: Untagged
@@ -741,6 +742,21 @@ MonoBehaviour:
   _gameScene: SampleScene
   _mainMenuScene: MainMenu
   _gameOverScene: GameOver
+--- !u!114 &926596567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 926596564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfbf572a6f40192479b5678ba343a867, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameJoltManager
+  _gameId: 1068349
+  _privateKey: 091f5f45105e3f686852f8cce8fe1563
+  _sessionPingInterval: 30
 --- !u!1 &1005564379
 GameObject:
   m_ObjectHideFlags: 0
@@ -1167,8 +1183,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Material: {fileID: 2100000, guid: 4159f32ea97a06f44a1a11ad290a736f, type: 2}
+  m_Color: {r: 0.49056602, g: 0.49056602, b: 0.49056602, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

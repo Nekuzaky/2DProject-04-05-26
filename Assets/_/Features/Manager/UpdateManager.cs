@@ -10,6 +10,12 @@ public class UpdateManager : MonoBehaviour
     public event System.Action OnUpdate;
     public event System.Action OnLateUpdate;
     public event System.Action OnFixedUpdate;
+    // Fires every 3 frames — use for distance culling, non-critical AI, ambient effects, etc.
+    public event System.Action OnSlowUpdate;
+    #endregion
+
+    #region State
+    private int _frameCount;
     #endregion
 
     #region Lifecycle
@@ -17,7 +23,7 @@ public class UpdateManager : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
         Instance = this;
@@ -28,6 +34,9 @@ public class UpdateManager : MonoBehaviour
     private void Update()
     {
         OnUpdate?.Invoke();
+
+        if ((_frameCount++ % 3) == 0)
+            OnSlowUpdate?.Invoke();
     }
 
     private void LateUpdate()

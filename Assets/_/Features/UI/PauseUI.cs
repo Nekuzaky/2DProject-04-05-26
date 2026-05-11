@@ -98,7 +98,7 @@ public class PauseUI : MonoBehaviour
         if (_pausePanel != null)
             _pausePanel.SetActive(true);
         SelectButton(_resumeButton != null ? _resumeButton : _menuButton);
-        Debug.Log("<color=green><b>PauseUI:</b></color> Paused");
+        GameLogger.Log("<color=green><b>PauseUI:</b></color> Paused");
     }
             
     private void Resume()
@@ -109,14 +109,14 @@ public class PauseUI : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(null);
         if (_pausePanel != null)
             _pausePanel.SetActive(false);
-        Debug.Log("<color=green><b>PauseUI:</b></color> Resumed");
+        GameLogger.Log("<color=green><b>PauseUI:</b></color> Resumed");
     }
 
     private void GoToMenu()
     {
         Time.timeScale = 1f;
         GameSceneManager.Instance.LoadMenu();
-        Debug.Log("<color=green><b>PauseUI:</b></color> Returning to Main Menu");
+        GameLogger.Log("<color=green><b>PauseUI:</b></color> Returning to Main Menu");
     }
     #endregion
 

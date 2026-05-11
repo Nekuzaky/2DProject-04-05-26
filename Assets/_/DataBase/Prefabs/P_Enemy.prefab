@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 78233429773353299}
   - component: {fileID: -7259620053087561333}
   - component: {fileID: -6400790894543375918}
+  - component: {fileID: 5718346825731292825}
   m_Layer: 0
   m_Name: P_Enemy
   m_TagString: Enemy
@@ -217,3 +218,22 @@ MonoBehaviour:
   - Prefab: {fileID: 8120913742235031590, guid: b95ed6f415461bc4c9b4f84858622f23, type: 3}
     DropChance: 5.6
   _dropOffset: {x: 0, y: 0}
+--- !u!114 &5718346825731292825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8638469823503880507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc0eec495677dcd4e97da63a333333c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLight
+  _lightColor: {r: 1, g: 0.2, b: 0.1, a: 1}
+  _intensity: 0.8
+  _outerRadius: 1.8
+  _innerRadius: 0.3
+  _falloff: 0.8
+  _pulseSpeed: 2.5
+  _pulseStrength: 0.2

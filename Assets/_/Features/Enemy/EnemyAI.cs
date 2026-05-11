@@ -6,11 +6,11 @@ public class EnemyAI : MonoBehaviour
 {
     #region Inspector Settings
     [Header("<color=cyan><b><size=15>Stats</size></b></color>")]
-    [SerializeField] protected float _moveSpeed = 3f;
-    [SerializeField] protected float _detectionRange = 12f;
-    [SerializeField] protected float _attackRange = 1.5f;
-    [SerializeField] protected int _attackDamage = 10;
-    [SerializeField] protected float _attackCooldown = 1f;
+    [SerializeField] protected float _moveSpeed       = 3f;
+    [SerializeField] protected float _detectionRange  = 12f;
+    [SerializeField] protected float _attackRange     = 1.5f;
+    [SerializeField] protected int   _attackDamage    = 10;
+    [SerializeField] protected float _attackCooldown  = 1f;
     #endregion
 
     #region Enums
@@ -18,11 +18,14 @@ public class EnemyAI : MonoBehaviour
     #endregion
 
     #region State
-    protected Transform _target;
-    protected Rigidbody2D _rb;
+    protected Transform    _target;
+    protected Rigidbody2D  _rb;
     protected EntityHealth _targetHealth;
-    protected float _nextAttackTime = 0f;
-    private EnemyState _currentState = EnemyState.Idle;
+    protected float        _nextAttackTime    = 0f;
+    // Pre-squared ranges — avoids Mathf.Sqrt every frame per enemy
+    protected float        _detectionRangeSqr;
+    protected float        _attackRangeSqr;
+    private   EnemyState   _currentState      = EnemyState.Idle;
     #endregion
 
     #region Properties
@@ -35,8 +38,11 @@ public class EnemyAI : MonoBehaviour
         gameObject.tag = "Enemy";
 
         _rb = GetComponent<Rigidbody2D>();
-        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        _rb.constraints  = RigidbodyConstraints2D.FreezeRotation;
         _rb.gravityScale = 0f;
+
+        _detectionRangeSqr = _detectionRange * _detectionRange;
+        _attackRangeSqr    = _attackRange    * _attackRange;
     }
 
     protected virtual void OnEnable()
@@ -60,9 +66,11 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        float distanceToTarget = Vector2.Distance(transform.position, _target.position);
+        // sqrMagnitude avoids Sqrt — compare squared distances to squared radii
+        Vector2 toTarget = _target.position - transform.position;
+        float   distSqr  = toTarget.sqrMagnitude;
 
-        UpdateState(distanceToTarget);
+        UpdateState(distSqr);
 
         if (_currentState == EnemyState.Attack)
             Attack();
@@ -76,11 +84,12 @@ public class EnemyAI : MonoBehaviour
         _targetHealth = EnemyManager.Instance.PlayerHealth;
     }
 
-    protected virtual void UpdateState(float distanceToTarget)
+    // Parameter is squared distance — compare against _detectionRangeSqr / _attackRangeSqr
+    protected virtual void UpdateState(float distSqr)
     {
-        if (distanceToTarget <= _attackRange)
+        if (distSqr <= _attackRangeSqr)
             _currentState = EnemyState.Attack;
-        else if (distanceToTarget <= _detectionRange)
+        else if (distSqr <= _detectionRangeSqr)
             _currentState = EnemyState.Chase;
         else
             _currentState = EnemyState.Idle;
@@ -99,10 +108,12 @@ public class EnemyAI : MonoBehaviour
 
         if (_currentState == EnemyState.Chase && _target != null)
         {
-            Vector2 direction = (_target.position - transform.position).normalized;
+            Vector2 direction = ((Vector2)(_target.position - transform.position)).normalized;
             _rb.linearVelocity = direction * _moveSpeed;
 
+#if UNITY_EDITOR
             Debug.DrawRay(transform.position, direction * 2f, Color.green);
+#endif
         }
         else
         {

@@ -4,7 +4,7 @@ public class PlayerAim : MonoBehaviour
 {
     #region Inspector Settings - References
     [Header("<color=cyan><b><size=15>References</size></b></color>")]
-    [SerializeField] private Transform _aimPivot;
+    [SerializeField] private Transform     _aimPivot;
     [SerializeField] private SpriteRenderer _weaponRenderer;
     #endregion
 
@@ -18,26 +18,60 @@ public class PlayerAim : MonoBehaviour
 
     #region State
     private Camera _mainCamera;
+    private bool   _usingUpdateManager;
     #endregion
 
     #region Lifecycle
     private void Awake()
     {
         _mainCamera = Camera.main;
-        
+
         if (_mainCamera == null)
-            Debug.LogError("<color=red>PlayerAim: Main Camera not found!</color>");
-        
+            GameLogger.LogError("<color=red>PlayerAim: Main Camera not found!</color>");
+
         if (_aimPivot == null)
-            Debug.LogError("<color=red>PlayerAim: Aim Pivot not assigned!</color>");
-        else
-            Debug.Log("<color=green>PlayerAim: Ready - Aim Pivot assigned</color>");
+            GameLogger.LogError("<color=red>PlayerAim: Aim Pivot not assigned!</color>");
     }
 
-    private void Start()
+    private void OnEnable()
     {
         if (UpdateManager.Instance != null)
+        {
             UpdateManager.Instance.OnUpdate += OnUpdateTick;
+            _usingUpdateManager = true;
+        }
+        else
+        {
+            _usingUpdateManager = false;
+        }
+    }
+
+    // Fallback: runs every frame when UpdateManager wasn't available at OnEnable.
+    // Keeps aiming functional regardless of which scene we loaded from.
+    private void Update()
+    {
+        // Lazy-subscribe if we missed the UpdateManager at OnEnable (scene transition timing)
+        if (!_usingUpdateManager && UpdateManager.Instance != null)
+        {
+            UpdateManager.Instance.OnUpdate += OnUpdateTick;
+            _usingUpdateManager = true;
+            return; // OnUpdateTick will fire via UpdateManager from next frame
+        }
+
+        if (!_usingUpdateManager)
+        {
+            // Lazy-init camera in case it was null at Awake (scene still loading)
+            if (_mainCamera == null) _mainCamera = Camera.main;
+            OnUpdateTick();
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_usingUpdateManager && UpdateManager.Instance != null)
+            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
+
+        _usingUpdateManager = false;
     }
     #endregion
 
@@ -49,11 +83,10 @@ public class PlayerAim : MonoBehaviour
         Vector2 aimDir = GetAimDirection();
         if (aimDir.sqrMagnitude < 0.01f) return;
 
-        bool isFacingLeft = aimDir.x < 0;
+        bool  isFacingLeft = aimDir.x < 0;
+        float angle        = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
 
-        float angle = Mathf.Atan2(aimDir.y, aimDir.x) * Mathf.Rad2Deg;
-
-        _aimPivot.rotation = Quaternion.Euler(0, 0, angle);
+        _aimPivot.rotation   = Quaternion.Euler(0, 0, angle);
         _aimPivot.localScale = Vector3.one;
 
         if (_weaponRenderer) _weaponRenderer.flipY = isFacingLeft;
@@ -63,23 +96,19 @@ public class PlayerAim : MonoBehaviour
 
     private Vector2 GetAimDirection()
     {
-        Vector2 stick = new Vector2(
-            Input.GetAxisRaw("RightStickHorizontal"),
-            Input.GetAxisRaw("RightStickVertical")
-        );
-        if (stick.magnitude > _stickDeadzone)
-            return stick.normalized;
+        // Right stick via InputHandler (avoids direct axis calls + handles missing axes gracefully)
+        if (InputHandler.Instance != null)
+        {
+            Vector2 stick = InputHandler.Instance.RightStick;
+            if (stick.magnitude > _stickDeadzone)
+                return stick.normalized;
 
+            return InputHandler.Instance.AimWorldPosition - (Vector2)transform.position;
+        }
+
+        // Fallback: mouse only
         Vector2 mouseWorld = _mainCamera.ScreenToWorldPoint(Input.mousePosition);
         return mouseWorld - (Vector2)transform.position;
-    }
-    #endregion
-
-    #region Cleanup
-    private void OnDestroy()
-    {
-        if (UpdateManager.Instance != null)
-            UpdateManager.Instance.OnUpdate -= OnUpdateTick;
     }
     #endregion
 }

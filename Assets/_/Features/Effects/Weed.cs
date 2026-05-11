@@ -19,7 +19,7 @@ public class Weed : MonoBehaviour
         if (effect != null)
             effect.Trigger(_visualDuration);
         else
-            Debug.LogWarning("<color=yellow><b>Weed:</b></color> WeedEffect not found — add the component to your player camera.");
+            GameLogger.LogWarning("<color=yellow><b>Weed:</b></color> WeedEffect not found — add the component to your player camera.");
     }
     #endregion
 }

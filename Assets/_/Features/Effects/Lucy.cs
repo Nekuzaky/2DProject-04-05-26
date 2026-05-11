@@ -20,7 +20,7 @@ public class Lucy : MonoBehaviour
         if (effect != null)
             effect.Trigger(_visualDuration, other.transform);
         else
-            Debug.LogWarning("<color=yellow><b>Lucy:</b></color> LucyEffect not found — add the component to your player camera.");
+            GameLogger.LogWarning("<color=yellow><b>Lucy:</b></color> LucyEffect not found — add the component to your player camera.");
     }
     #endregion
 }

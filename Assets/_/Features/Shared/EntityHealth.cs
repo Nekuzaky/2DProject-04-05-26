@@ -73,7 +73,7 @@ public class EntityHealth : MonoBehaviour
 
         if (gameObject.CompareTag("Player"))
         {
-            Debug.Log("<color=red><b>EntityHealth:</b></color> Player has died.");
+            GameLogger.Log("<color=red><b>EntityHealth:</b></color> Player has died.");
             Destroy(gameObject);
             return;
         }
@@ -86,7 +86,7 @@ public class EntityHealth : MonoBehaviour
         }
 
         Destroy(gameObject);
-        Debug.Log("<color=red><b>EntityHealth:</b></color> Entity has died: " + gameObject.name);
+        GameLogger.Log("<color=red><b>EntityHealth:</b></color> Entity has died: " + gameObject.name);
     }
     #endregion
 

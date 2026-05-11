@@ -1,0 +1,25 @@
+<linker>
+  <!--
+    Preserve rules for IL2CPP + Managed Stripping Level: Medium (WebGL build).
+    Add entries here if you get MissingMethodException or TypeInitializationException
+    at runtime after stripping.
+  -->
+
+  <!-- GameJolt API signing: MD5 used directly in GameJoltManager.ComputeMD5() -->
+  <assembly fullname="System.Core">
+    <type fullname="System.Security.Cryptography.MD5CryptoServiceProvider" preserve="all"/>
+  </assembly>
+  <assembly fullname="mscorlib">
+    <type fullname="System.Security.Cryptography.MD5"           preserve="all"/>
+    <type fullname="System.Security.Cryptography.HashAlgorithm" preserve="all"/>
+    <type fullname="System.Text.StringBuilder"                  preserve="all"/>
+    <type fullname="System.Text.Encoding"                       preserve="all"/>
+  </assembly>
+
+  <!-- Unity Networking: UnityWebRequest used in GameJoltManager -->
+  <assembly fullname="UnityEngine.UnityWebRequestModule" preserve="all"/>
+
+  <!-- All game scripts: preserved by default via scene references,
+       but explicit here as a safety net against aggressive stripping. -->
+  <assembly fullname="Assembly-CSharp" preserve="all"/>
+</linker>
